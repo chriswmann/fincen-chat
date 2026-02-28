@@ -8,6 +8,7 @@ authors = [
 ]
 requires-python = ">=3.13"
 dependencies = [
+  "fastapi[standard]>=0.134.0",
   "neo4j>=6.1.0",
   "pydantic-ai>=1.63.0",
   "pydantic-settings>=2.13.1",

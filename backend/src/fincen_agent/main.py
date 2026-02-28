@@ -1,8 +1,12 @@
 import asyncio
 import base64
 import os
+
+from dotenv import load_dotenv
 from pydantic_ai import Agent
 from pydantic_ai.mcp import MCPServerStreamableHTTP
+
+load_dotenv()
 
 MODEL = os.getenv("MODEL", "google-gla:gemini-3-flash-preview")
 NEO4J_USERNAME = os.getenv("NEO4J_USERNAME", "neo4j")
