@@ -19,6 +19,6 @@ until docker compose exec neo4j cypher-shell -u "$NEO4J_USERNAME" -p "$NEO4J_PAS
 done
 
 echo "Neo4j is ready! Loading FinCEN data from local CSV files..."
-cat src/lpa/fincen_csv.cypher | docker compose exec -T neo4j cypher-shell -u "$NEO4J_USERNAME" -p "$NEO4J_PASSWORD"
+cat scripts/fincen_csv.cypher | docker compose exec -T neo4j cypher-shell -u "$NEO4J_USERNAME" -p "$NEO4J_PASSWORD"
 
 echo "Data loaded successfully!"
