@@ -1,19 +1,12 @@
 import asyncio
 import os
-
-from dataclasses import dataclass
-
-from pydantic import BaseModel, Field
 from pydantic_ai import Agent
-
-from db import DBConfig, setup_db
 
 MODEL = os.getenv("MODEL", "google-gla:gemini-3-flash-preview")
 
 
 async def main():
-    db_config = DBConfig()
-    setup_db(db_config)
+
     agent = Agent(
         MODEL,
         system_prompt="You are a helpful assistant",
