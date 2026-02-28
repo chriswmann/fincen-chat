@@ -1,0 +1,14 @@
+[project]
+name = "fincen-chat"
+version = "0.1.0"
+description = "Chat with the FinCEN data"
+readme = "README.md"
+authors = [
+  { name = "Chris", email = "8133496+chriswmann@users.noreply.github.com" },
+]
+requires-python = ">=3.13"
+dependencies = [
+  "neo4j>=6.1.0",
+  "pydantic-ai>=1.63.0",
+  "pydantic-settings>=2.13.1",
+]
