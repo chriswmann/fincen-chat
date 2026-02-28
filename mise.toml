@@ -1,0 +1,38 @@
+[tasks.teardown]
+description = "Stop all services and remove data"
+run = """
+docker compose down -v
+sudo rm -rf data
+"""
+
+[tasks.setup]
+description = "Boot services, wait for Neo4j, and load FinCEN data"
+run = """
+#!/usr/bin/env bash
+set -e
+
+# Load .env for Neo4j credentials
+if [ -f .env ]; then
+  export $(grep -v '^#' .env | xargs)
+fi
+
+echo "Creating data directories..."
+mkdir -vp data/neo4j
+
+echo "Starting Docker Compose services..."
+docker compose up -d
+
+echo "Waiting for Neo4j to be ready..."
+until docker compose exec neo4j cypher-shell -u "$NEO4J_USERNAME" -p "$NEO4J_PASSWORD" "RETURN 1;" > /dev/null 2>&1; do
+  sleep 2
+done
+
+echo "Neo4j is ready! Loading FinCEN data..."
+cat backend/scripts/fincen_csv.cypher | docker compose exec -T neo4j cypher-shell -u "$NEO4J_USERNAME" -p "$NEO4J_PASSWORD"
+
+echo "Setup complete!"
+"""
+
+[tasks.run]
+description = "Start the FastAPI dev server"
+run = "uv run uvicorn fincen_agent.server:app --app-dir backend/src --reload --port 8080"
