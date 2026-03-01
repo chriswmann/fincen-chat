@@ -1,22 +1,11 @@
 from neo4j import GraphDatabase
-from pydantic import SecretStr
-from pydantic_settings import BaseSettings, SettingsConfigDict
-
-
-class DBConfig(BaseSettings):
-    model_config = SettingsConfigDict(
-        env_file=".env", env_file_encoding="utf-8", extra="ignore"
-    )
-    neo4j_username: str
-    neo4j_password: SecretStr
-    neo4j_uri: str
-    neo4j_port: int
+from fincen_agent.config import Neo4jConfig
 
 
 class Neo4jConnection:
     """Context manager that wraps a Neo4j driver using DBConfig credentials."""
 
-    def __init__(self, config: DBConfig) -> None:
+    def __init__(self, config: Neo4jConfig) -> None:
         self._config = config
         self._driver = None
 

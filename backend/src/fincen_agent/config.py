@@ -2,6 +2,26 @@ from pydantic import SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
+class AgentConfig(BaseSettings):
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        extra="ignore",
+    )
+
+    model: str
+
+
+class Neo4jConfig(BaseSettings):
+    model_config = SettingsConfigDict(
+        env_file=".env", env_file_encoding="utf-8", extra="ignore"
+    )
+    neo4j_username: str
+    neo4j_password: SecretStr
+    neo4j_uri: str
+    neo4j_port: int
+
+
 class PostgresConfig(BaseSettings):
     model_config = SettingsConfigDict(
         env_file=".env",
