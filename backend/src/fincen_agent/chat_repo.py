@@ -1,12 +1,10 @@
 """Handles chat CRUD"""
 
 import json
-import uuid
-from enum import StrEnum, auto
-from typing import Any
+from functools import singledispatch
 
 import asyncpg
-from pydantic import BaseModel, Field, SecretStr, UUID4
+from pydantic import UUID4
 from pydantic_ai.messages import (
     ModelMessage,
     ModelRequest,
@@ -18,65 +16,8 @@ from pydantic_ai.messages import (
     ToolReturnPart,
     UserPromptPart,
 )
-from pydantic_settings import BaseSettings, SettingsConfigDict
 
-
-class PostgresConfig(BaseSettings):
-    model_config = SettingsConfigDict(
-        env_file=".env",
-        env_file_encoding="utf-8",
-        extra="ignore",
-    )
-
-    postgres_user: str
-    postgres_password: SecretStr
-    postgres_db: str
-    postgres_schema: str = "fincen"
-    postgres_port: int = 5432
-
-    @property
-    def dsn(self) -> str:
-        return (
-            f"postgresql://{self.postgres_user}"
-            f":{self.postgres_password.get_secret_value()}"
-            f"@localhost:{self.postgres_port}/{self.postgres_db}"
-        )
-
-
-class Role(StrEnum):
-    USER = auto()
-    ASSISTANT = auto()
-    TOOL_CALL = auto()
-    TOOL_RETURN = auto()
-
-
-class Message(BaseModel):
-    id: UUID4 = Field(
-        default_factory=uuid.uuid4, description="Unique identifier for the message"
-    )
-    content: str = Field(description="The text content of the message")
-    role: Role = Field(description="The role of the message sender")
-    tool_name: str | None = Field(
-        default=None, description="Name of the tool invoked, if any"
-    )
-    tool_call_id: str | None = Field(
-        default=None, description="Identifier of the tool invoked, if any"
-    )
-    tool_args: dict[str, Any] | None = Field(
-        default=None, description="Arguments passed to the tool, if any"
-    )
-
-
-class Chat(BaseModel):
-    id: UUID4 = Field(description="Unique identifier for the chat session")
-    messages: list[Message] = Field(
-        default_factory=list, description="Ordered list of messages in the chat"
-    )
-    position: int = Field(description="Current position index within the chat")
-
-    @property
-    def num_messages(self) -> int:
-        return len(self.messages)
+from .models import Chat, Message, Role
 
 
 async def create_chat(conn: asyncpg.Connection) -> UUID4:
@@ -166,12 +107,12 @@ class MessageGrouper:
     def _flush_request(self) -> None:
         if self._request_parts:
             self._result.append(ModelRequest(parts=self._request_parts))
-            self._request_parts: list[ModelRequestPart] = []
+            self._request_parts = []
 
     def _flush_response(self) -> None:
         if self._response_parts:
             self._result.append(ModelResponse(parts=self._response_parts))
-            self._response_parts: list[ModelResponsePart] = []
+            self._response_parts = []
 
     def add(self, msg: Message) -> None:
         match msg.role:
@@ -234,3 +175,54 @@ def to_pydantic_ai_messages(
         grouper.add(message)
 
     return grouper.build()
+
+
+@singledispatch
+def _part_to_message(part: ModelRequestPart | ModelResponsePart) -> Message:
+    raise ValueError(f"Unexpected part type: {type(part).__name__}")
+
+
+@_part_to_message.register
+def _(part: TextPart) -> Message:
+    return Message(
+        content=part.content,
+        role=Role.ASSISTANT,
+    )
+
+
+@_part_to_message.register
+def _(part: ToolCallPart) -> Message:
+    return Message(
+        tool_name=part.tool_name,
+        tool_call_id=part.tool_call_id,
+        tool_args=part.args if isinstance(part.args, dict) else {},
+        content="",
+        role=Role.TOOL_CALL,
+    )
+
+
+@_part_to_message.register
+def _(part: ToolReturnPart) -> Message:
+    return Message(
+        tool_name=part.tool_name,
+        tool_call_id=part.tool_call_id,
+        content=str(part.content),
+        role=Role.TOOL_RETURN,
+    )
+
+
+@_part_to_message.register
+def _(part: UserPromptPart) -> Message:
+    return Message(content=str(part.content), role=Role.USER)
+
+
+def from_pydantic_ai_messages(
+    history: list[ModelMessage],
+) -> list[Message]:
+    """Convert from PydanticAI's grouped message format to flat DB rows.
+
+    This is the inverse of `to_pydantic_ai_messages`. We iterate over
+    each message's parts and create one `Message` row per part.
+    """
+
+    return [_part_to_message(part) for model_msg in history for part in model_msg.parts]
