@@ -17,7 +17,7 @@ from pydantic_ai.messages import (
     UserPromptPart,
 )
 
-from .models import Chat, Message, Role
+from fincen_agent.models import Chat, Message, Role
 
 
 async def create_chat(conn: asyncpg.Connection) -> UUID4:

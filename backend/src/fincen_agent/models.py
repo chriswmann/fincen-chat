@@ -48,3 +48,8 @@ class Chat(BaseModel):
     @property
     def num_messages(self) -> int:
         return len(self.messages)
+
+
+class ChatRequest(BaseModel):
+    message: str
+    conversation_id: UUID4 | None
