@@ -16,15 +16,15 @@ class DBConfig(BaseSettings):
 class Neo4jConnection:
     """Context manager that wraps a Neo4j driver using DBConfig credentials."""
 
-    def __init__(self, db_config: DBConfig) -> None:
-        self._db_config = db_config
+    def __init__(self, config: DBConfig) -> None:
+        self._config = config
         self._driver = None
 
     def __enter__(self):
-        uri = f"neo4j://{self.db_config.neo4j_uri}:{self.db_config.neo4j_port}"
+        uri = f"neo4j://{self._config.neo4j_uri}:{self._config.neo4j_port}"
         auth = (
-            self.db_config.neo4j_username,
-            self.db_config.neo4j_password.get_secret_value(),
+            self._config.neo4j_username,
+            self._config.neo4j_password.get_secret_value(),
         )
         self._driver = GraphDatabase.driver(uri=uri, auth=auth)
 
