@@ -1,6 +1,7 @@
 """Handles chat CRUD"""
 
 import json
+import uuid
 from enum import StrEnum, auto
 from typing import Any
 
@@ -39,7 +40,9 @@ class Role(StrEnum):
 
 
 class Message(BaseModel):
-    id: UUID4 = Field(description="Unique identifier for the message")
+    id: UUID4 = Field(
+        default_factory=uuid.uuid4, description="Unique identifier for the message"
+    )
     content: str = Field(description="The text content of the message")
     role: Role = Field(description="The role of the message sender")
     tool_name: str | None = Field(
@@ -67,7 +70,9 @@ class Chat(BaseModel):
 
 async def create_pool(config: PostgresConfig) -> asyncpg.Pool:
     """Create and return an asyncpg Pool"""
-    pool = await asyncpg.create_pool(dsn=config.dsn)
+    pool = await asyncpg.create_pool(
+        dsn=config.dsn, server_settings={"search_path": config.postgres_schema}
+    )
     return pool
 
 
@@ -115,7 +120,7 @@ async def save_messages(
     """Save a batch of messages to an existing chat"""
     await pool.executemany(
         """insert into messages (chat_id, role, content, tool_name, tool_call_id, tool_args, position)
-        values ($1, $2 $3, $4, $5, $6::jsonb, $7)
+        values ($1, $2, $3, $4, $5, $6::jsonb, $7)
         """,
         [
             (

@@ -36,3 +36,7 @@ echo "Setup complete!"
 [tasks.run]
 description = "Start the FastAPI dev server"
 run = "uv run uvicorn fincen_agent.server:app --app-dir backend/src --reload --port 8080"
+
+[tasks.tests]
+description = "Run tests"
+run = "PYTHONPATH=backend/src uv run backend/tests/test_chat_repo.py"
