@@ -68,26 +68,18 @@ class Chat(BaseModel):
         return len(self.messages)
 
 
-async def create_pool(config: PostgresConfig) -> asyncpg.Pool:
-    """Create and return an asyncpg Pool"""
-    pool = await asyncpg.create_pool(
-        dsn=config.dsn, server_settings={"search_path": config.postgres_schema}
-    )
-    return pool
-
-
-async def create_chat(pool: asyncpg.Pool) -> UUID4:
+async def create_chat(conn: asyncpg.Connection) -> UUID4:
     """Insert a new chat into the DB and return the ID"""
-    row: UUID4 = await pool.fetchval(
+    row: UUID4 = await conn.fetchval(
         query="insert into chats default values returning id"
     )
 
     return row
 
 
-async def get_chat(chat_id: UUID4, pool: asyncpg.Pool) -> Chat:
+async def get_chat(chat_id: UUID4, conn: asyncpg.Connection) -> Chat:
     """Fetch a chat and all of its messages, ordered by position"""
-    rows = await pool.fetch(
+    rows = await conn.fetch(
         "select id, messages, position from messages where id = $1", chat_id
     )
 
@@ -115,10 +107,10 @@ async def get_chat(chat_id: UUID4, pool: asyncpg.Pool) -> Chat:
 
 
 async def save_messages(
-    chat_id: UUID4, messages: list[Message], pool: asyncpg.Pool
+    chat_id: UUID4, messages: list[Message], conn: asyncpg.Connection
 ) -> None:
     """Save a batch of messages to an existing chat"""
-    await pool.executemany(
+    await conn.executemany(
         """insert into messages (chat_id, role, content, tool_name, tool_call_id, tool_args, position)
         values ($1, $2, $3, $4, $5, $6::jsonb, $7)
         """,
@@ -137,7 +129,7 @@ async def save_messages(
     )
 
 
-async def get_messages(chat_id: UUID4, pool: asyncpg.Pool) -> list[Message]:
+async def get_messages(chat_id: UUID4, conn: asyncpg.Connection) -> list[Message]:
     """Load the messages for a chat, ordered by position"""
-    chat = await get_chat(chat_id, pool)
+    chat = await get_chat(chat_id, conn)
     return chat.messages
