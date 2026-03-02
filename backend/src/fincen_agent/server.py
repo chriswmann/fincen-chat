@@ -7,6 +7,7 @@ from fastapi import APIRouter, Depends, FastAPI, Request
 from fastapi.responses import StreamingResponse
 from pydantic import UUID4
 from pydantic_ai import Agent
+from pydantic_ai.messages import ModelMessage
 from fincen_agent.agent import get_agent_with_neo4j_mcp_toolset
 from fincen_agent.chat_repo import (
     MessageGrouper,
@@ -17,29 +18,29 @@ from fincen_agent.chat_repo import (
     to_pydantic_ai_messages,
 )
 from fincen_agent.config import AgentConfig, Neo4jConfig, PostgresConfig
-from fincen_agent.models import ChatRequest, Message
+from fincen_agent.models import ChatRequest
 
 
 @lru_cache()
 def get_agent_config() -> AgentConfig:
     """Provide the config via an easier-to-monkeypatch function."""
-    return AgentConfig()
+    return AgentConfig()  # type: ignore - ignore errors about missing required fields
 
 
 @lru_cache()
 def get_neo4j_config() -> Neo4jConfig:
     """Provide the config via an easier-to-monkeypatch function."""
-    return Neo4jConfig()
+    return Neo4jConfig()  # type: ignore - ignore errors about missing required fields
 
 
 @lru_cache()
 def get_postgres_config() -> PostgresConfig:
     """Provide the config via an easier-to-monkeypatch function."""
-    return PostgresConfig()
+    return PostgresConfig()  # type: ignore - ignore errors about missing required fields
 
 
 @asynccontextmanager
-async def lifespan(app: FastAPI) -> None:
+async def lifespan(app: FastAPI) -> AsyncGenerator:
     """Manage the asyncpg.Pool over the life of the app.
 
     FastAPI's `lifespan` context manager runs setup code (before the `yield`)
@@ -74,7 +75,7 @@ app = FastAPI(lifespan=lifespan)
 router = APIRouter(prefix="/v1")
 
 
-async def get_db_connection(request: Request) -> None:
+async def get_db_connection(request: Request) -> AsyncGenerator:
     """Dependency that yields a database connection.
 
     Use `with` to guarantee the connection returned cleanly
@@ -92,7 +93,7 @@ async def event_stream(
     request: ChatRequest,
     agent: Agent,
     chat_id: UUID4,
-    history: list[Message] | None,
+    history: list[ModelMessage] | None,
     conn: asyncpg.Connection,
     start_position: int,
 ) -> AsyncGenerator[str, None]:
@@ -107,9 +108,15 @@ async def event_stream(
                 yield sse_event("token", {"content": token})
             all_messages = stream.all_messages()
 
-        new_messages = all_messages[len(history) :]
+        offset = len(history) if history is not None else 0
+        new_messages = all_messages[offset:]
         db_messages = from_pydantic_ai_messages(new_messages)
-        await save_messages(chat_id, db_messages, conn, start_position)
+        await save_messages(
+            chat_id=chat_id,
+            messages=db_messages,
+            start_position=start_position,
+            conn=conn,
+        )
         yield sse_event("done", {})
 
     except Exception as e:
@@ -151,3 +158,10 @@ async def chat_request(
 
 
 app.include_router(router=router, prefix="/api")
+
+# Health check
+app.get("/")
+
+
+async def root():
+    return {"status": "ok"}
