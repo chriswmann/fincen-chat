@@ -5,7 +5,7 @@ type Role = 'user' | 'assistant';
 let conversationId: string | null = null;
 
 const form = document.querySelector<HTMLFormElement>('#chat-form')!;
-const input = document.querySelector<HTMLFormElement>('message-input')!;
+const input = document.querySelector<HTMLFormElement>('#message-input')!;
 const messagesContainer = document.querySelector<HTMLFormElement>('#chat-messages')!;
 
 // ── appendMessage ───────────────────────────────────────────────────

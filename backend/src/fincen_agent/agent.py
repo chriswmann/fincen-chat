@@ -20,6 +20,7 @@ def get_agent_with_neo4j_mcp_toolset(
         agent_config.model,
         system_prompt="You are a helpful assistant",
         toolsets=[server],
+        retries=3,
     )
 
     return agent

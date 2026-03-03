@@ -159,9 +159,8 @@ async def chat_request(
 
 app.include_router(router=router, prefix="/api")
 
+
 # Health check
-app.get("/")
-
-
+@app.get("/")
 async def root():
     return {"status": "ok"}

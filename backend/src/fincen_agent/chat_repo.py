@@ -1,5 +1,6 @@
 """Handles chat CRUD"""
 
+from pydantic_ai import SystemPromptPart
 import json
 from functools import singledispatch
 
@@ -155,6 +156,13 @@ class MessageGrouper:
                     )
                 )
 
+            case Role.SYSTEM:
+                self._request_parts.append(
+                    SystemPromptPart(
+                        content=msg.content,
+                    )
+                )
+
     def build(self) -> list[ModelMessage]:
         self._flush_request()
         self._flush_response()
@@ -214,6 +222,11 @@ def _(part: ToolReturnPart) -> Message:
 @_part_to_message.register
 def _(part: UserPromptPart) -> Message:
     return Message(content=str(part.content), role=Role.USER)
+
+
+@_part_to_message.register
+def _(part: SystemPromptPart) -> Message:
+    return Message(content=str(part.content), role=Role.SYSTEM)
 
 
 def from_pydantic_ai_messages(

@@ -10,6 +10,7 @@ class Role(StrEnum):
     ASSISTANT = auto()
     TOOL_CALL = auto()
     TOOL_RETURN = auto()
+    SYSTEM = auto()
 
 
 message_content_description = """
@@ -52,4 +53,4 @@ class Chat(BaseModel):
 
 class ChatRequest(BaseModel):
     message: str
-    conversation_id: UUID4 | None
+    conversation_id: UUID4 | None = None
