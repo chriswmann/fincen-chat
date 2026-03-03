@@ -767,6 +767,7 @@ dependencies = [
     { name = "neo4j" },
     { name = "pydantic-ai" },
     { name = "pydantic-settings" },
+    { name = "pyyaml" },
     { name = "uvicorn" },
 ]
 
@@ -777,6 +778,7 @@ requires-dist = [
     { name = "neo4j", specifier = ">=6.1.0" },
     { name = "pydantic-ai", specifier = ">=1.63.0" },
     { name = "pydantic-settings", specifier = ">=2.13.1" },
+    { name = "pyyaml", specifier = ">=6.0.3" },
     { name = "uvicorn", specifier = ">=0.41.0" },
 ]
 
