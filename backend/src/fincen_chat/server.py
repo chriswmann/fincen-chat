@@ -8,8 +8,8 @@ from fastapi.responses import StreamingResponse
 from pydantic import UUID4
 from pydantic_ai import Agent
 from pydantic_ai.messages import ModelMessage
-from fincen_agent.agent import get_agent_with_neo4j_mcp_toolset
-from fincen_agent.chat_repo import (
+from .agent import get_agent_with_neo4j_mcp_toolset
+from .chat_repo import (
     MessageGrouper,
     create_chat,
     get_chat,
@@ -17,8 +17,8 @@ from fincen_agent.chat_repo import (
     from_pydantic_ai_messages,
     to_pydantic_ai_messages,
 )
-from fincen_agent.config import AgentConfig, Neo4jConfig, PostgresConfig
-from fincen_agent.models import ChatRequest
+from .config import AgentConfig, Neo4jConfig, PostgresConfig
+from .models import ChatRequest
 
 
 @lru_cache()

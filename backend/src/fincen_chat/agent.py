@@ -1,7 +1,7 @@
 import base64
 from pydantic_ai import Agent
 from pydantic_ai.mcp import MCPServerStreamableHTTP
-from fincen_agent.config import AgentConfig, Neo4jConfig
+from .config import AgentConfig, Neo4jConfig
 
 
 def get_agent_with_neo4j_mcp_toolset(
