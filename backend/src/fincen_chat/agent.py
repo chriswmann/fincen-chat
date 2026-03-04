@@ -2,8 +2,10 @@ import base64
 from pydantic_ai import Agent
 from pydantic_ai.mcp import MCPServerStreamableHTTP
 from .config import AgentConfig, Neo4jConfig
+from .tracing import instrument
 
 
+@instrument
 def get_agent_with_neo4j_mcp_toolset(
     agent_config: AgentConfig,
     neo4j_config: Neo4jConfig,

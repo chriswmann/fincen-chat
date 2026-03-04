@@ -19,6 +19,7 @@ from .chat_repo import (
 )
 from .config import AgentConfig, Neo4jConfig, PostgresConfig
 from .models import ChatRequest
+from .tracing import instrument
 
 
 @lru_cache()
@@ -39,6 +40,7 @@ def get_postgres_config() -> PostgresConfig:
     return PostgresConfig()  # type: ignore - ignore errors about missing required fields
 
 
+@instrument
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncGenerator:
     """Manage the asyncpg.Pool over the life of the app.
@@ -75,6 +77,7 @@ app = FastAPI(lifespan=lifespan)
 router = APIRouter(prefix="/v1")
 
 
+@instrument
 async def get_db_connection(request: Request) -> AsyncGenerator:
     """Dependency that yields a database connection.
 
@@ -123,6 +126,7 @@ async def event_stream(
         yield sse_event("error", {"message": str(e)})
 
 
+@instrument
 @router.post("/chat")
 async def chat_request(
     raw_request: Request, request: ChatRequest, conn=Depends(get_db_connection)

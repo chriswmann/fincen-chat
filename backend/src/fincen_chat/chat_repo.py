@@ -19,8 +19,10 @@ from pydantic_ai.messages import (
 )
 
 from .models import Chat, Message, Role
+from .tracing import instrument
 
 
+@instrument
 async def create_chat(conn: asyncpg.Connection) -> UUID4:
     """Insert a new chat into the DB and return the ID"""
     row = await conn.fetchval(query="insert into chats default values returning id;")
@@ -31,6 +33,7 @@ async def create_chat(conn: asyncpg.Connection) -> UUID4:
     return row
 
 
+@instrument
 async def get_chat(chat_id: UUID4, conn: asyncpg.Connection) -> Chat:
     """Fetch a chat and all of its messages, ordered by position"""
     rows = await conn.fetch(
@@ -66,6 +69,7 @@ async def get_chat(chat_id: UUID4, conn: asyncpg.Connection) -> Chat:
     return chat
 
 
+@instrument
 async def save_messages(
     chat_id: UUID4,
     messages: list[Message],
@@ -92,6 +96,7 @@ async def save_messages(
     )
 
 
+@instrument
 async def get_messages(chat_id: UUID4, conn: asyncpg.Connection) -> list[Message]:
     """Load the messages for a chat, ordered by position"""
     chat = await get_chat(chat_id, conn)
@@ -170,6 +175,7 @@ class MessageGrouper:
         return self._result
 
 
+@instrument
 def to_pydantic_ai_messages(
     messages: list[Message],
     grouper: MessageGrouper,
@@ -229,6 +235,7 @@ def _(part: SystemPromptPart) -> Message:
     return Message(content=str(part.content), role=Role.SYSTEM)
 
 
+@instrument
 def from_pydantic_ai_messages(
     history: list[ModelMessage],
 ) -> list[Message]:
