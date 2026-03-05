@@ -8,7 +8,7 @@ from fastapi.responses import StreamingResponse
 from pydantic import UUID4
 from pydantic_ai import Agent
 from pydantic_ai.messages import ModelMessage
-from .agent import get_agent_with_neo4j_mcp_toolset
+from .agent import get_agent_with_neo4j_mcp_toolset, init_langfuse
 from .chat_repo import (
     MessageGrouper,
     create_chat,
@@ -17,7 +17,7 @@ from .chat_repo import (
     from_pydantic_ai_messages,
     to_pydantic_ai_messages,
 )
-from .config import AgentConfig, Neo4jConfig, PostgresConfig
+from .config import AgentConfig, LangfuseConfig, Neo4jConfig, PostgresConfig
 from .models import ChatRequest
 from .tracing import instrument
 
@@ -32,6 +32,12 @@ def get_agent_config() -> AgentConfig:
 def get_neo4j_config() -> Neo4jConfig:
     """Provide the config via an easier-to-monkeypatch function."""
     return Neo4jConfig()  # type: ignore - ignore errors about missing required fields
+
+
+@lru_cache()
+def get_langfuse_config() -> LangfuseConfig:
+    """Provide the config via an easier-to-monkeypatch function."""
+    return LangfuseConfig()  # type: ignore - ignore errors about missing required fields
 
 
 @lru_cache()
@@ -52,7 +58,10 @@ async def lifespan(app: FastAPI) -> AsyncGenerator:
 
     agent_config = get_agent_config()
     neo4j_config = get_neo4j_config()
+    langfuse_config = get_langfuse_config()
     postgres_config = get_postgres_config()
+
+    init_langfuse(langfuse_config)
     print("Initialising database pool")
     app.state.pool = await asyncpg.create_pool(
         dsn=postgres_config.dsn,
@@ -84,7 +93,6 @@ async def get_db_connection(request: Request) -> AsyncGenerator:
     Use `with` to guarantee the connection returned cleanly
     """
     async with request.app.state.pool.acquire() as conn:
-        # Yield the connection to the end point
         yield conn
 
 

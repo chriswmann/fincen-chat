@@ -1,4 +1,4 @@
-from pydantic import SecretStr
+from pydantic import AliasChoices, Field, SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -20,6 +20,26 @@ class Neo4jConfig(BaseSettings):
     neo4j_password: SecretStr
     neo4j_uri: str
     neo4j_port: int
+
+
+class LangfuseConfig(BaseSettings):
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        extra="ignore",
+    )
+
+    langfuse_public_key: str = Field(
+        validation_alias=AliasChoices(
+            "langfuse_public_key", "langfuse_init_project_public_key"
+        ),
+    )
+    langfuse_secret_key: SecretStr = Field(
+        validation_alias=AliasChoices(
+            "langfuse_secret_key", "langfuse_init_project_secret_key"
+        ),
+    )
+    langfuse_host: str = "http://localhost:3000"
 
 
 class PostgresConfig(BaseSettings):

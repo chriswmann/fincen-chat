@@ -12,6 +12,7 @@ from pydantic_ai.messages import (
     ModelRequestPart,
     ModelResponse,
     ModelResponsePart,
+    RetryPromptPart,
     TextPart,
     ToolCallPart,
     ToolReturnPart,
