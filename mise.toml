@@ -33,8 +33,8 @@ cat backend/scripts/fincen_csv.cypher | docker compose exec -T neo4j cypher-shel
 echo "Setup complete!"
 """
 
-[tasks.run]
-description = "Run the app"
+[tasks.dev]
+description = "Run the app in dev"
 run = """
 #!/usr/bin/env bash
 set -e
