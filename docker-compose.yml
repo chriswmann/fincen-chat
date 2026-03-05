@@ -29,6 +29,8 @@ services:
         condition: service_healthy
     environment:
       - NEO4J_URI=bolt://neo4j:${NEO4J_PORT}
+      - NEO4J_USERNAME=${NEO4J_USERNAME}
+      - NEO4J_PASSWORD=${NEO4J_PASSWORD}
       - NEO4J_TRANSPORT_MODE=http
       - NEO4J_MCP_HTTP_HOST=0.0.0.0
       - NEO4J_MCP_HTTP_PORT=8000

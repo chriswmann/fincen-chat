@@ -130,8 +130,12 @@ async def event_stream(
         )
         yield sse_event("done", {})
 
-    except Exception as e:
-        yield sse_event("error", {"message": str(e)})
+    except BaseException as e:
+        if isinstance(e, ExceptionGroup):
+            messages = "; ".join(str(exc) for exc in e.exceptions)
+            yield sse_event("error", {"message": messages})
+        else:
+            yield sse_event("error", {"message": str(e)})
 
 
 @instrument
