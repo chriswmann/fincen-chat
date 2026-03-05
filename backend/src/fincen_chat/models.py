@@ -6,11 +6,12 @@ from pydantic import BaseModel, Field, UUID4
 
 
 class Role(StrEnum):
-    USER = auto()
     ASSISTANT = auto()
+    RETRY = auto()
+    SYSTEM = auto()
     TOOL_CALL = auto()
     TOOL_RETURN = auto()
-    SYSTEM = auto()
+    USER = auto()
 
 
 message_content_description = """

@@ -169,6 +169,16 @@ class MessageGrouper:
                     )
                 )
 
+            case Role.RETRY:
+                self._flush_response()
+                self._request_parts.append(
+                    RetryPromptPart(
+                        content=msg.content,
+                        tool_name=str(msg.tool_name),
+                        tool_call_id=str(msg.tool_call_id),
+                    )
+                )
+
     def build(self) -> list[ModelMessage]:
         self._flush_request()
         self._flush_response()
@@ -234,6 +244,16 @@ def _(part: UserPromptPart) -> Message:
 @_part_to_message.register
 def _(part: SystemPromptPart) -> Message:
     return Message(content=str(part.content), role=Role.SYSTEM)
+
+
+@_part_to_message.register
+def _(part: RetryPromptPart) -> Message:
+    return Message(
+        tool_name=part.tool_name,
+        tool_call_id=part.tool_call_id,
+        content=str(part.content),
+        role=Role.RETRY,
+    )
 
 
 @instrument

@@ -12,7 +12,7 @@ create table if not exists fincen.message_roles (
   description text
 );
 
-insert into fincen.message_roles (role) values ('user'), ('assistant'), ('tool_call'), ('tool_return'), ('system')
+insert into fincen.message_roles (role) values ('user'), ('assistant'), ('tool_call'), ('tool_return'), ('system'), ('retry')
 on conflict (role) do nothing;
 
 create table if not exists fincen.messages (
