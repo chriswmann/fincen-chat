@@ -1,5 +1,9 @@
+from typing import Callable, TypeVar
+from functools import lru_cache
 from pydantic import AliasChoices, Field, SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+T = TypeVar("T", bound=BaseSettings)
 
 
 class AgentConfig(BaseSettings):
@@ -10,16 +14,6 @@ class AgentConfig(BaseSettings):
     )
 
     model: str
-
-
-class Neo4jConfig(BaseSettings):
-    model_config = SettingsConfigDict(
-        env_file=".env", env_file_encoding="utf-8", extra="ignore"
-    )
-    neo4j_username: str
-    neo4j_password: SecretStr
-    neo4j_uri: str
-    neo4j_port: int
 
 
 class LangfuseConfig(BaseSettings):
@@ -42,6 +36,17 @@ class LangfuseConfig(BaseSettings):
     langfuse_host: str = "http://localhost:3000"
 
 
+class Neo4jConfig(BaseSettings):
+    model_config = SettingsConfigDict(
+        env_file=".env", env_file_encoding="utf-8", extra="ignore"
+    )
+    neo4j_username: str
+    neo4j_password: SecretStr
+    neo4j_uri: str
+    neo4j_port: int
+    neo4j_mcp_url: str
+
+
 class PostgresConfig(BaseSettings):
     model_config = SettingsConfigDict(
         env_file=".env",
@@ -62,3 +67,17 @@ class PostgresConfig(BaseSettings):
             f":{self.postgres_password.get_secret_value()}"
             f"@localhost:{self.postgres_port}/{self.postgres_db}"
         )
+
+
+def _cached_config(cls: type[T]) -> Callable[[], T]:
+    @lru_cache()
+    def factory() -> T:
+        return cls()
+
+    return factory
+
+
+get_agent_config = _cached_config(AgentConfig)
+get_neo4j_config = _cached_config(Neo4jConfig)
+get_langfuse_config = _cached_config(LangfuseConfig)
+get_postgres_config = _cached_config(PostgresConfig)

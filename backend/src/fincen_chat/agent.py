@@ -22,10 +22,10 @@ def get_agent_with_neo4j_mcp_toolset(
     neo4j_config: Neo4jConfig,
 ) -> Agent:
     credentials = base64.b64encode(
-        f"{neo4j_config.neo4j_username}:{neo4j_config.neo4j_password}".encode()
+        f"{neo4j_config.neo4j_username}:{neo4j_config.neo4j_password.get_secret_value()}".encode()
     ).decode()
     server = MCPServerStreamableHTTP(
-        "http://localhost:8000/mcp",
+        neo4j_config.neo4j_mcp_url,
         headers={"Authorization": f"Basic {credentials}"},
     )
 

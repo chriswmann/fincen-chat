@@ -14,18 +14,15 @@ class Role(StrEnum):
     USER = auto()
 
 
-message_content_description = """
-The text content of the message.
-Empty string default since tool calls don't have any content.
-"""
-
-
 class Message(BaseModel):
     id: UUID4 = Field(
         default_factory=uuid.uuid4, description="Unique identifier for the message"
     )
     content: str = Field(
-        description=message_content_description,
+        description=(
+            "The text content of the message."
+            "Empty string default since tool calls don't have any content."
+        ),
         default="",
     )
     role: Role = Field(description="The role of the message sender")
@@ -45,7 +42,9 @@ class Chat(BaseModel):
     messages: list[Message] = Field(
         default_factory=list, description="Ordered list of messages in the chat"
     )
-    position: int = Field(description="Current position index within the chat")
+    position: int | None = Field(
+        description="Current position index within the chat", default=None
+    )
 
     @property
     def num_messages(self) -> int:

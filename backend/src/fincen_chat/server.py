@@ -1,8 +1,7 @@
+import asyncpg
 import json
 from contextlib import asynccontextmanager
-from functools import lru_cache
 from typing import AsyncGenerator
-import asyncpg
 from fastapi import APIRouter, Depends, FastAPI, Request
 from fastapi.responses import StreamingResponse
 from pydantic import UUID4
@@ -17,38 +16,19 @@ from .chat_repo import (
     from_pydantic_ai_messages,
     to_pydantic_ai_messages,
 )
-from .config import AgentConfig, LangfuseConfig, Neo4jConfig, PostgresConfig
+from .config import (
+    get_agent_config,
+    get_neo4j_config,
+    get_langfuse_config,
+    get_postgres_config,
+)
 from .models import ChatRequest
 from .tracing import instrument
 
 
-@lru_cache()
-def get_agent_config() -> AgentConfig:
-    """Provide the config via an easier-to-monkeypatch function."""
-    return AgentConfig()  # type: ignore - ignore errors about missing required fields
-
-
-@lru_cache()
-def get_neo4j_config() -> Neo4jConfig:
-    """Provide the config via an easier-to-monkeypatch function."""
-    return Neo4jConfig()  # type: ignore - ignore errors about missing required fields
-
-
-@lru_cache()
-def get_langfuse_config() -> LangfuseConfig:
-    """Provide the config via an easier-to-monkeypatch function."""
-    return LangfuseConfig()  # type: ignore - ignore errors about missing required fields
-
-
-@lru_cache()
-def get_postgres_config() -> PostgresConfig:
-    """Provide the config via an easier-to-monkeypatch function."""
-    return PostgresConfig()  # type: ignore - ignore errors about missing required fields
-
-
 @instrument
 @asynccontextmanager
-async def lifespan(app: FastAPI) -> AsyncGenerator:
+async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     """Manage the asyncpg.Pool over the life of the app.
 
     FastAPI's `lifespan` context manager runs setup code (before the `yield`)
@@ -87,11 +67,8 @@ router = APIRouter(prefix="/v1")
 
 
 @instrument
-async def get_db_connection(request: Request) -> AsyncGenerator:
-    """Dependency that yields a database connection.
-
-    Use `with` to guarantee the connection returned cleanly
-    """
+async def get_db_connection(request: Request) -> AsyncGenerator[asyncpg.Pool, None]:
+    """Dependency that yields a database connection."""
     async with request.app.state.pool.acquire() as conn:
         yield conn
 
@@ -130,7 +107,7 @@ async def event_stream(
         )
         yield sse_event("done", {})
 
-    except BaseException as e:
+    except Exception as e:
         if isinstance(e, ExceptionGroup):
             messages = "; ".join(str(exc) for exc in e.exceptions)
             yield sse_event("error", {"message": messages})
@@ -150,7 +127,7 @@ async def chat_request(
         history = to_pydantic_ai_messages(
             messages=chat.messages, grouper=MessageGrouper()
         )
-        start_position = chat.position + 1
+        start_position = 0 if chat.position is None else chat.position + 1
     else:
         chat_id = await create_chat(conn)
         history = []

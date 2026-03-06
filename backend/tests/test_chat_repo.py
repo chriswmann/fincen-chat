@@ -1,6 +1,6 @@
 import asyncio
 import uuid
-from fincen_agent.chat_repo import *
+from fincen_chat.chat_repo import *
 
 
 async def create_conn(config: PostgresConfig) -> asyncpg.Connection:

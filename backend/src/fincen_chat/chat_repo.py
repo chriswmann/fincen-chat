@@ -59,7 +59,7 @@ async def get_chat(chat_id: UUID4, conn: asyncpg.Connection) -> Chat:
         for r in rows
     ]
 
-    position = rows[-1]["position"] if rows else 0
+    position = rows[-1]["position"] if rows else None
 
     chat = Chat(
         id=chat_id,
@@ -140,8 +140,8 @@ class MessageGrouper:
                 self._flush_request()
                 self._response_parts.append(
                     ToolCallPart(
-                        tool_name=str(msg.tool_name),
-                        tool_call_id=str(msg.tool_call_id),
+                        tool_name=msg.tool_name,
+                        tool_call_id=msg.tool_call_id,
                         args=msg.tool_args or {},
                     )
                 )
@@ -156,8 +156,8 @@ class MessageGrouper:
                 self._flush_response()
                 self._request_parts.append(
                     ToolReturnPart(
-                        tool_name=str(msg.tool_name),
-                        tool_call_id=str(msg.tool_call_id),
+                        tool_name=msg.tool_name,
+                        tool_call_id=msg.tool_call_id,
                         content=msg.content,
                     )
                 )
@@ -174,8 +174,8 @@ class MessageGrouper:
                 self._request_parts.append(
                     RetryPromptPart(
                         content=msg.content,
-                        tool_name=str(msg.tool_name),
-                        tool_call_id=str(msg.tool_call_id),
+                        tool_name=msg.tool_name,
+                        tool_call_id=msg.tool_call_id,
                     )
                 )
 

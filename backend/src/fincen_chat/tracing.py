@@ -29,6 +29,6 @@ def instrument(fn: Callable) -> Callable:
                 span.set_attribute("args", str(args))
                 span.set_attribute("kwargs", str(kwargs))
 
-            return fn(*args, **kwargs)
+                return fn(*args, **kwargs)
 
         return sync_wrapper

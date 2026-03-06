@@ -19,7 +19,7 @@ services:
       - ./data/neo4j/plugins:/plugins
     ports:
       - "7474:7474"
-      - "${NEO4J_PORT}:${NEO4J_PORT}"
+      - "${NEO4J_PORT}:7687"
 
   neo4j-mcp:
     image: mcp/neo4j
@@ -29,8 +29,6 @@ services:
         condition: service_healthy
     environment:
       - NEO4J_URI=bolt://neo4j:${NEO4J_PORT}
-      - NEO4J_USERNAME=${NEO4J_USERNAME}
-      - NEO4J_PASSWORD=${NEO4J_PASSWORD}
       - NEO4J_TRANSPORT_MODE=http
       - NEO4J_MCP_HTTP_HOST=0.0.0.0
       - NEO4J_MCP_HTTP_PORT=8000
@@ -47,7 +45,7 @@ services:
       - ./data/postgres:/var/lib/postgresql
       - ./backend/scripts/init_db.sql:/docker-entrypoint-initdb.d/init_db.sql
     ports:
-      - "${POSTGRES_PORT}:${POSTGRES_PORT}"
+      - "${POSTGRES_PORT}:5432"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
       interval: 5s
