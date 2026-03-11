@@ -3,8 +3,7 @@ from langfuse import Langfuse
 from pydantic_ai import Agent, ModelRetry
 from pydantic_ai.mcp import MCPServerStreamableHTTP
 from .config import AgentConfig, LangfuseConfig, Neo4jConfig, REFUSAL_MESSAGE
-from .models import AgentOutput, FinCENResponse, ErrorResponse
-from .tracing import instrument
+from .models import AgentOutput, FinCENResponse
 
 
 def init_langfuse(config: LangfuseConfig) -> Langfuse:
@@ -17,7 +16,6 @@ def init_langfuse(config: LangfuseConfig) -> Langfuse:
     return langfuse
 
 
-@instrument
 def get_agent_with_neo4j_mcp_toolset(
     agent_config: AgentConfig,
     neo4j_config: Neo4jConfig,

@@ -1,6 +1,7 @@
 import asyncio
 import asyncpg
 import json
+import logging
 from contextlib import asynccontextmanager
 from typing import AsyncGenerator
 from fastapi import APIRouter, Depends, FastAPI, Request
@@ -24,10 +25,10 @@ from .config import (
     get_postgres_config,
 )
 from .models import AgentOutput, ChatRequest, FinCENResponse
-from .tracing import instrument
+
+logger = logging.Logger(__file__)
 
 
-@instrument
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     """Manage the asyncpg.Pool over the life of the app.
@@ -43,7 +44,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     postgres_config = get_postgres_config()
 
     init_langfuse(langfuse_config)
-    print("Initialising database pool")
+    logger.info("Initialising database pool")
     app.state.pool = await asyncpg.create_pool(
         dsn=postgres_config.dsn,
         server_settings={
@@ -58,7 +59,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
 
     yield
 
-    print("Closing database pool")
+    logger.info("Closing database pool")
     if app.state.pool is not None:
         await app.state.pool.close()
 
@@ -67,7 +68,6 @@ app = FastAPI(lifespan=lifespan)
 router = APIRouter(prefix="/v1")
 
 
-@instrument
 async def get_db_connection(request: Request) -> AsyncGenerator[asyncpg.Pool, None]:
     """Dependency that yields a database connection."""
     async with request.app.state.pool.acquire() as conn:
@@ -151,7 +151,6 @@ async def stream_structured_response(
     )
 
 
-@instrument
 @router.post("/chat")
 async def chat_request(
     raw_request: Request, request: ChatRequest, conn=Depends(get_db_connection)
