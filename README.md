@@ -14,4 +14,4 @@ mise run teardown  # Stop services and delete local data
 # Security
 `.env` doesn't contain any real secrets and I wanted to keep manual configuration to a minimum, hence why it isn't in `.gitignore` (or, even better, a secrets manager isn't used).
 
-There are currently no custom guardrails for the model - the chat messages are passed as-is to the LLM, so it will respond as per the provider's configuration to the chat.
+The guardrails are very limited and basic at the moment but the model will decline to answer many messages that aren't related to the FinCEN data.

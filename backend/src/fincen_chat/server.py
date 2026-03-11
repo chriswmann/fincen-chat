@@ -1,3 +1,4 @@
+import asyncio
 import asyncpg
 import json
 from contextlib import asynccontextmanager
@@ -22,7 +23,7 @@ from .config import (
     get_langfuse_config,
     get_postgres_config,
 )
-from .models import ChatRequest
+from .models import AgentOutput, ChatRequest, FinCENResponse
 from .tracing import instrument
 
 
@@ -88,13 +89,28 @@ async def event_stream(
     yield sse_event("meta", {"conversation_id": str(chat_id)})
 
     try:
-        async with agent.run_stream(
+        result = await agent.run(
             request.message,
             message_history=history if history else None,
-        ) as stream:
-            async for token in stream.stream_text(delta=True):
-                yield sse_event("token", {"content": token})
-            all_messages = stream.all_messages()
+        )
+
+        output: AgentOutput = result.output
+        all_messages = result.all_messages()
+
+        if isinstance(output, FinCENResponse):
+            async for chunk in stream_structured_response(output):
+                yield chunk
+        else:
+            # Error response
+            yield sse_event(
+                "structured_response",
+                {
+                    "answer": output.reason,
+                    "entities": [],
+                    "confidence": "low",
+                    "data_found": False,
+                },
+            )
 
         offset = len(history) if history is not None else 0
         new_messages = all_messages[offset:]
@@ -113,6 +129,26 @@ async def event_stream(
             yield sse_event("error", {"message": messages})
         else:
             yield sse_event("error", {"message": str(e)})
+
+
+async def stream_structured_response(
+    output: FinCENResponse,
+) -> AsyncGenerator[str, None]:
+    """Simulate streaming by emitting answer tokens, then a metadata event."""
+    words = output.answer.split()
+    for ind, word in enumerate(words):
+        token = word if ind == 0 else f" {word}"
+        yield sse_event("token", {"content": token})
+        await asyncio.sleep(0.01)  # small delay for visual effect
+
+    yield sse_event(
+        "response_meta",
+        {
+            "entities": [e.model_dump() for e in output.entities_mentioned],
+            "confidence": output.confidence,
+            "data_found": output.data_found,
+        },
+    )
 
 
 @instrument

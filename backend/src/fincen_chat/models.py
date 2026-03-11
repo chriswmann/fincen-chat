@@ -1,8 +1,56 @@
 import uuid
-from typing import Any
+from typing import Any, Literal
 from enum import StrEnum, auto
 
 from pydantic import BaseModel, Field, UUID4
+
+# Structured output models
+
+
+class FinCENEntity(BaseModel):
+    """A named entity from the FinCEN dataset."""
+
+    name: str
+    entity_type: str | None = Field(
+        default=None,
+        description="E.g. 'Bank', 'Individual', 'Shell Company'",
+    )
+    country: str | None = None
+
+
+class FinCENResponse(BaseModel):
+    """Successful response grounded in FinCEN graph data."""
+
+    answer: str = Field(
+        description="A clear, human-readable answer to the user's question."
+    )
+    entities_mentioned: list[FinCENEntity] = Field(
+        default_factory=list,
+        description="FinCEN entities referenced in the answer.",
+    )
+    confidence: Literal["high", "medium", "low"] = Field(
+        description=(
+            "How confident the model is in ths answer, baserd on the data found."
+            "Use 'low' if the graph data was sparse or ambiguous."
+        ),
+    )
+    # `data_found` is a self-reporting integrity check
+    data_found: bool = Field(
+        description="True if the Neo4j graph returned relevant data for this query",
+    )
+
+
+class ErrorResponse(BaseModel):
+    """Used when the question cannot be answered from FinCEN data."""
+
+    reason: str = Field(
+        description="A brief explanation of why the question cannot be answered."
+    )
+
+
+AgentOutput = FinCENResponse | ErrorResponse
+
+# Chat models
 
 
 class Role(StrEnum):

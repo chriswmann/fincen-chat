@@ -37,6 +37,15 @@ interface SSEEvent {
   data: string,
 }
 
+interface ResponseMeta {
+  entities: {
+    name: string, entity_type: string | null;
+    country: string | null
+  }[];
+  confidence: 'high' | 'medium' | 'low';
+  data_found: boolean;
+}
+
 // ── parseSSEEvents ──────────────────────────────────────────────────
 // Split events by new lines, return complete events and the remaining 
 // text.
@@ -131,6 +140,22 @@ async function sendMessage(message: string): Promise<void> {
             break;
           }
 
+          case 'response_meta': {
+            const meta: ResponseMeta = JSON.parse(sseEvent.data);
+
+            appendMetaFooter(assistantDiv, meta.entities, meta.confidence);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            break;
+          }
+
+          case 'structured_response': {
+            const resp = JSON.parse(sseEvent.data);
+            assistantDiv.innerHTML = await marked.parse(resp.answer); // render the reason text
+            appendMetaFooter(assistantDiv, resp.entities, resp.confidence); // add the low-confidence badge
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            break;
+          }
+
           case 'done': {
             break;
           }
@@ -153,6 +178,23 @@ async function sendMessage(message: string): Promise<void> {
     submitButton.disabled = false;
     input.focus();
   }
+}
+
+function appendMetaFooter(assistantDiv: HTMLDivElement, entities: ResponseMeta['entities'], confidence: ResponseMeta['confidence']): void {
+  const metaDiv = document.createElement('div');
+  metaDiv.className = 'response-meta';
+  const badge = document.createElement('span');
+  badge.className = `confidence confidence--${confidence}`;
+  badge.textContent = `${confidence}`;
+  metaDiv.appendChild(badge);
+
+  if (entities.length > 0) {
+    const entitiesSpan = document.createElement('span');
+    entitiesSpan.className = 'entities-label';
+    entitiesSpan.textContent = `Entities: ${entities.map(e => e.name).join(', ')}`;
+    metaDiv.appendChild(entitiesSpan);
+  }
+  assistantDiv.appendChild(metaDiv);
 }
 
 form.addEventListener('submit', async (e: Event) => {

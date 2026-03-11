@@ -177,3 +177,34 @@ footer {
   padding: 0;
   background: none;
 }
+
+
+/* ── Structured response metadata ────────────────────────────────── */
+.response-meta {
+  margin-top: 0.6rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  font-size: 0.72rem;
+  color: #888;
+}
+
+.confidence {
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.confidence--high   { background: #14532d; color: #86efac; }
+.confidence--medium { background: #713f12; color: #fde68a; }
+.confidence--low    { background: #4c1d24; color: #fca5a5; }
+
+.entities-label {
+  font-style: italic;
+  opacity: 0.8;
+}
