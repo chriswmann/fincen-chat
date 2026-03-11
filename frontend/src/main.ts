@@ -1,3 +1,4 @@
+import { marked } from 'marked';
 import './style.css'
 
 type Role = 'user' | 'assistant';
@@ -85,7 +86,7 @@ async function sendMessage(message: string): Promise<void> {
   const submitButton = document.querySelector<HTMLButtonElement>('button')!;
   input.disabled = true;
   submitButton.disabled = true;
-
+  let rawMarkdown = '';
   try {
     const response = await fetch('/api/v1/chat', {
       method: 'POST',
@@ -123,7 +124,8 @@ async function sendMessage(message: string): Promise<void> {
 
           case 'token': {
             const token = JSON.parse(sseEvent.data);
-            assistantDiv.textContent += token.content;
+            rawMarkdown += token.content;
+            assistantDiv.innerHTML = await marked.parse(rawMarkdown);
 
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
             break;

@@ -120,3 +120,60 @@ footer {
   cursor: not-allowed;
 }
 
+/* ── Markdown inside assistant messages ──────────────────────────── */
+.message.assistant h1,
+.message.assistant h2,
+.message.assistant h3 {
+  margin-top: 0.75rem;
+  margin-bottom: 0.25rem;
+  color: #fff;
+}
+
+.message.assistant h1 {
+  font-size: 1.25rem;
+}
+
+.message.assistant h2 {
+  font-size: 1.1rem;
+}
+
+.message.assistant h3 {
+  font-size: 1rem;
+}
+
+.message.assistant p {
+  margin: 0.4rem 0;
+}
+
+.message.assistant ul,
+.message.assistant ol {
+  margin: 0.4rem 0 0.4rem 1.5rem;
+}
+
+.message.assistant li {
+  margin: 0.2rem 0;
+}
+
+.message.assistant strong {
+  color: #fff;
+}
+
+.message.assistant code {
+  background: #1a1a2e;
+  padding: 0.1rem 0.4rem;
+  border-radius: 0.25rem;
+  font-size: 0.9em;
+}
+
+.message.assistant pre {
+  background: #1a1a2e;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  overflow-x: auto;
+  margin: 0.5rem 0;
+}
+
+.message.assistant pre code {
+  padding: 0;
+  background: none;
+}
