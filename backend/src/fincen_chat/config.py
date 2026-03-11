@@ -5,6 +5,8 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 T = TypeVar("T", bound=BaseSettings)
 
+REFUSAL_MESSAGE = "I'm sorry, I can only answer questions about the FinCEN data."
+
 
 class AgentConfig(BaseSettings):
     model_config = SettingsConfigDict(
