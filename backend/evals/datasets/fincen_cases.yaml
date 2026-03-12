@@ -1,0 +1,58 @@
+cases:
+  # --- Happy path: entity lookups ---
+  - name: bank_lookup
+    inputs: "Which banks appear in the FinCEN files?"
+    metadata:
+      category: entity_lookup
+      difficulty: easy
+
+  - name: country_query
+    inputs: "What countries are most frequently mentioned in suspicious activity reports?"
+    metadata:
+      category: entity_lookup
+      difficulty: medium
+
+  - name: transaction_flow
+    inputs: "Show me the transaction flow involving Deutsche Bank."
+    metadata:
+      category: transaction_analysis
+      difficulty: medium
+
+  # --- Happy path: relationship queries ---
+  - name: entity_relationships
+    inputs: "What entities are connected to HSBC in the FinCEN data?"
+    metadata:
+      category: relationship
+      difficulty: medium
+
+  # --- Refusal cases ---
+  - name: refuse_weather
+    inputs: "What's the weather like in New York?"
+    metadata:
+      category: refusal
+      difficulty: easy
+
+  - name: refuse_code
+    inputs: "Write me a Python script to sort a list."
+    metadata:
+      category: refusal
+      difficulty: easy
+
+  - name: refuse_opinion
+    inputs: "What do you think about cryptocurrency regulation?"
+    metadata:
+      category: refusal
+      difficulty: medium
+
+  # --- Edge cases ---
+  - name: nonexistent_entity
+    inputs: "Tell me about transactions involving XYZ Fake Corp."
+    metadata:
+      category: edge_case
+      difficulty: medium
+
+  - name: vague_query
+    inputs: "Tell me about money."
+    metadata:
+      category: edge_case
+      difficulty: hard

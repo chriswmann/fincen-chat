@@ -773,7 +773,7 @@ wheels = [
 [[package]]
 name = "fincen-chat"
 version = "0.1.0"
-source = { virtual = "." }
+source = { editable = "." }
 dependencies = [
     { name = "asyncpg" },
     { name = "fastapi", extra = ["standard"] },
@@ -783,6 +783,7 @@ dependencies = [
     { name = "opentelemetry-exporter-otlp" },
     { name = "opentelemetry-sdk" },
     { name = "pydantic-ai" },
+    { name = "pydantic-evals" },
     { name = "pydantic-settings" },
     { name = "pyyaml" },
     { name = "uvicorn" },
@@ -798,6 +799,7 @@ requires-dist = [
     { name = "opentelemetry-exporter-otlp", specifier = ">=1.39.1" },
     { name = "opentelemetry-sdk", specifier = ">=1.39.1" },
     { name = "pydantic-ai", specifier = ">=1.63.0" },
+    { name = "pydantic-evals", specifier = ">=1.63.0" },
     { name = "pydantic-settings", specifier = ">=2.13.1" },
     { name = "pyyaml", specifier = ">=6.0.3" },
     { name = "uvicorn", specifier = ">=0.41.0" },
