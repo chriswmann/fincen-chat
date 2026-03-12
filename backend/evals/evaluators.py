@@ -74,7 +74,7 @@ class NonEmptyAnswer(Evaluator):
 
 
 @dataclass
-class ConfidenceIsReasonalbe(Evaluator):
+class ConfidenceIsReasonable(Evaluator):
     """Check the confidence field is one of the expected literals."""
 
     def evaluate(self, ctx: EvaluatorContext[str, AgentOutput]) -> bool:

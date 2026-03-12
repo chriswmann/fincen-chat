@@ -1,0 +1,1136 @@
+{
+  "name": "run_agent",
+  "cases": [
+    {
+      "name": "bank_lookup",
+      "inputs": "Which banks appear in the FinCEN files?",
+      "metadata": {
+        "category": "entity_lookup",
+        "difficulty": "easy"
+      },
+      "expected_output": null,
+      "output": {
+        "answer": "The FinCEN files include a large number of financial institutions that acted as filing organizations, beneficiary banks, or originator banks for suspicious transactions. \n\nSome of the most frequently appearing banks in the dataset include:\n- **The Bank of New York Mellon Corp.** (involved in over 3,000 filings)\n- **Standard Chartered Plc**\n- **Credit Suisse AG**\n- **Deutsche Bank AG**\n- **JSC Norvik Banka**\n- **LTB Bank**\n- **AS Expobank**\n- **Rosbank**\n- **JP Morgan Chase & Co.**\n- **Habib Bank A G Zurich**\n- **China Investment Corporation**\n- **DBS Bank Ltd**\n- **JSC VTB Bank**\n- **Commonwealth Bank of Australia**\n\nOther banks such as **ABN Amro**, **Alfa-Bank**, **Amsterdam Trade Bank**, and **HSBC** (implied through various regional branches) also appear throughout the records. In total, the dataset contains hundreds of unique bank names across various global jurisdictions.",
+        "entities_mentioned": [
+          {
+            "name": "The Bank of New York Mellon Corp.",
+            "entity_type": "Bank",
+            "country": null
+          },
+          {
+            "name": "Standard Chartered Plc",
+            "entity_type": "Bank",
+            "country": null
+          },
+          {
+            "name": "Credit Suisse AG",
+            "entity_type": "Bank",
+            "country": null
+          },
+          {
+            "name": "Deutsche Bank AG",
+            "entity_type": "Bank",
+            "country": null
+          },
+          {
+            "name": "JSC Norvik Banka",
+            "entity_type": "Bank",
+            "country": null
+          },
+          {
+            "name": "LTB Bank",
+            "entity_type": "Bank",
+            "country": null
+          },
+          {
+            "name": "AS Expobank",
+            "entity_type": "Bank",
+            "country": null
+          },
+          {
+            "name": "Rosbank",
+            "entity_type": "Bank",
+            "country": null
+          },
+          {
+            "name": "JP Morgan Chase & Co.",
+            "entity_type": "Bank",
+            "country": null
+          },
+          {
+            "name": "Habib Bank A G Zurich",
+            "entity_type": "Bank",
+            "country": null
+          },
+          {
+            "name": "China Investment Corporation",
+            "entity_type": "Bank",
+            "country": null
+          },
+          {
+            "name": "DBS Bank Ltd",
+            "entity_type": "Bank",
+            "country": null
+          },
+          {
+            "name": "JSC VTB Bank",
+            "entity_type": "Bank",
+            "country": null
+          },
+          {
+            "name": "Commonwealth Bank of Australia",
+            "entity_type": "Bank",
+            "country": null
+          }
+        ],
+        "confidence": "high",
+        "data_found": true
+      },
+      "metrics": {},
+      "attributes": {},
+      "scores": {},
+      "labels": {},
+      "assertions": {
+        "IsValidOutputType": {
+          "name": "IsValidOutputType",
+          "value": true,
+          "reason": null,
+          "source": {
+            "name": "IsValidOutputType",
+            "arguments": null
+          }
+        },
+        "RefusalCheck": {
+          "name": "RefusalCheck",
+          "value": true,
+          "reason": "Not a refusal case",
+          "source": {
+            "name": "RefusalCheck",
+            "arguments": null
+          }
+        },
+        "HasEntitiesWhenDataFound": {
+          "name": "HasEntitiesWhenDataFound",
+          "value": true,
+          "reason": "Entities present or `data_found=False`",
+          "source": {
+            "name": "HasEntitiesWhenDataFound",
+            "arguments": null
+          }
+        },
+        "NonEmptyAnswer": {
+          "name": "NonEmptyAnswer",
+          "value": true,
+          "reason": null,
+          "source": {
+            "name": "NonEmptyAnswer",
+            "arguments": null
+          }
+        },
+        "ConfidenceIsReasonable": {
+          "name": "ConfidenceIsReasonable",
+          "value": true,
+          "reason": null,
+          "source": {
+            "name": "ConfidenceIsReasonable",
+            "arguments": null
+          }
+        },
+        "LLMJudge": {
+          "name": "LLMJudge",
+          "value": true,
+          "reason": "The response correctly identifies and lists major banks associated with the FinCEN files investigation, such as Deutsche Bank, BNY Mellon, Standard Chartered, and JPMorgan Chase, based on publicly available data from the ICIJ investigation.",
+          "source": {
+            "name": "LLMJudge",
+            "arguments": {
+              "rubric": "The response directly and relevantly answers the user's question about FinCEN data. It does not contain fabricated information. If the question is out of scope, the response clearly states this.",
+              "model": "google-gla:gemini-3-flash-preview",
+              "include_input": true
+            }
+          }
+        },
+        "LLMJudge_2": {
+          "name": "LLMJudge",
+          "value": true,
+          "reason": "The response correctly identifies major banks that were central to the FinCEN Files investigation, such as Deutsche Bank, BNY Mellon, and Standard Chartered, demonstrating that it is grounded in actual data rather than hallucinated.",
+          "source": {
+            "name": "LLMJudge",
+            "arguments": {
+              "rubric": "The response appears grounded in actual data rather than hallucinated. It references specific entities, amounts, or relationships that could plausibly come from a financial crimes database.",
+              "model": "google-gla:gemini-3-flash-preview",
+              "include_input": true
+            }
+          }
+        }
+      },
+      "task_duration": 12.429738830000133,
+      "total_duration": 15.546353101730347,
+      "source_case_name": null,
+      "trace_id": "00000000000000000000000000000000",
+      "span_id": "0000000000000000",
+      "evaluator_failures": []
+    },
+    {
+      "name": "country_query",
+      "inputs": "What countries are most frequently mentioned in suspicious activity reports?",
+      "metadata": {
+        "category": "entity_lookup",
+        "difficulty": "medium"
+      },
+      "expected_output": null,
+      "output": {
+        "answer": "The countries most frequently mentioned in suspicious activity reports (SARs) within the FinCEN dataset are as follows:\n\n1. **Russia**: Mentioned in approximately 2,184 reports.\n2. **Switzerland**: Mentioned in 1,807 reports.\n3. **Latvia**: Mentioned in 1,354 reports.\n4. **Singapore**: Mentioned in 1,259 reports.\n5. **United Kingdom**: Mentioned in 920 reports.\n6. **Ukraine**: Mentioned in 864 reports.\n7. **United Arab Emirates**: Mentioned in 856 reports.\n8. **Hong Kong**: Mentioned in 818 reports.\n9. **China**: Mentioned in 810 reports.\n10. **Turkey**: Mentioned in 742 reports.\n\nThese counts are based on the countries of the entities (originators, beneficiaries, and those concerned) and the countries of the banks involved in the filings.",
+        "entities_mentioned": [
+          {
+            "name": "Russia",
+            "entity_type": "Country",
+            "country": "Russia"
+          },
+          {
+            "name": "Switzerland",
+            "entity_type": "Country",
+            "country": "Switzerland"
+          },
+          {
+            "name": "Latvia",
+            "entity_type": "Country",
+            "country": "Latvia"
+          },
+          {
+            "name": "Singapore",
+            "entity_type": "Country",
+            "country": "Singapore"
+          },
+          {
+            "name": "United Kingdom",
+            "entity_type": "Country",
+            "country": "United Kingdom"
+          },
+          {
+            "name": "Ukraine",
+            "entity_type": "Country",
+            "country": "Ukraine"
+          },
+          {
+            "name": "United Arab Emirates",
+            "entity_type": "Country",
+            "country": "United Arab Emirates"
+          },
+          {
+            "name": "Hong Kong",
+            "entity_type": "Country",
+            "country": "Hong Kong"
+          },
+          {
+            "name": "China",
+            "entity_type": "Country,name:",
+            "country": "China"
+          },
+          {
+            "name": "Turkey",
+            "entity_type": "Country",
+            "country": "Turkey"
+          }
+        ],
+        "confidence": "high",
+        "data_found": true
+      },
+      "metrics": {},
+      "attributes": {},
+      "scores": {},
+      "labels": {},
+      "assertions": {
+        "IsValidOutputType": {
+          "name": "IsValidOutputType",
+          "value": true,
+          "reason": null,
+          "source": {
+            "name": "IsValidOutputType",
+            "arguments": null
+          }
+        },
+        "RefusalCheck": {
+          "name": "RefusalCheck",
+          "value": true,
+          "reason": "Not a refusal case",
+          "source": {
+            "name": "RefusalCheck",
+            "arguments": null
+          }
+        },
+        "HasEntitiesWhenDataFound": {
+          "name": "HasEntitiesWhenDataFound",
+          "value": true,
+          "reason": "Entities present or `data_found=False`",
+          "source": {
+            "name": "HasEntitiesWhenDataFound",
+            "arguments": null
+          }
+        },
+        "NonEmptyAnswer": {
+          "name": "NonEmptyAnswer",
+          "value": true,
+          "reason": null,
+          "source": {
+            "name": "NonEmptyAnswer",
+            "arguments": null
+          }
+        },
+        "ConfidenceIsReasonable": {
+          "name": "ConfidenceIsReasonable",
+          "value": true,
+          "reason": null,
+          "source": {
+            "name": "ConfidenceIsReasonable",
+            "arguments": null
+          }
+        },
+        "LLMJudge": {
+          "name": "LLMJudge",
+          "value": true,
+          "reason": "The response provides an accurate list of the top 10 countries mentioned in the FinCEN Files dataset, including specific counts that align with publicly available data analysis of the ICIJ leak. It directly answers the user's question without fabricating information.",
+          "source": {
+            "name": "LLMJudge",
+            "arguments": {
+              "rubric": "The response directly and relevantly answers the user's question about FinCEN data. It does not contain fabricated information. If the question is out of scope, the response clearly states this.",
+              "model": "google-gla:gemini-3-flash-preview",
+              "include_input": true
+            }
+          }
+        },
+        "LLMJudge_2": {
+          "name": "LLMJudge",
+          "value": true,
+          "reason": "The response provides specific counts for various countries and references the FinCEN dataset, which is a real-world database associated with Suspicious Activity Reports (SARs). The numbers and countries cited are consistent with analyses of the FinCEN Files leak.",
+          "source": {
+            "name": "LLMJudge",
+            "arguments": {
+              "rubric": "The response appears grounded in actual data rather than hallucinated. It references specific entities, amounts, or relationships that could plausibly come from a financial crimes database.",
+              "model": "google-gla:gemini-3-flash-preview",
+              "include_input": true
+            }
+          }
+        }
+      },
+      "task_duration": 28.975955842000076,
+      "total_duration": 35.83515238761902,
+      "source_case_name": null,
+      "trace_id": "00000000000000000000000000000000",
+      "span_id": "0000000000000000",
+      "evaluator_failures": []
+    },
+    {
+      "name": "transaction_flow",
+      "inputs": "Show me the transaction flow involving Deutsche Bank.",
+      "metadata": {
+        "category": "transaction_analysis",
+        "difficulty": "medium"
+      },
+      "expected_output": null,
+      "output": {
+        "answer": "The transaction flow involving Deutsche Bank (primarily Deutsche Bank AG) shows it acting in multiple roles: as a filing institution, an originator bank, and a beneficiary bank.\n\nAs a filing institution, Deutsche Bank reported several high-value transactions, including:\n- A $802.7 million transfer from Gazprombank to JPMorgan.\n- A $462.4 million flow from Citibank, N.A. to Stanbic Bank.\n- A $336.2 million transfer from ING Netherland NV to Rigensis Bank AS.\n\nWhen acting as the originator bank, Deutsche Bank was involved in significant outflows, such as $458 million to Usb AG and $239.9 million to Falcon Private Bank Ltd. Conversely, it also acted as the beneficiary bank for large inflows, notably receiving over $1.08 billion in total reported transactions from JPMorgan Chase Bank and $130 million from Bank of America.\n\nOverall, the data highlights Deutsche Bank's extensive connections with major global financial institutions like Standard Chartered, BNY Mellon, and Barclays.",
+        "entities_mentioned": [
+          {
+            "name": "Deutsche Bank AG",
+            "entity_type": "Bank",
+            "country": null
+          },
+          {
+            "name": "JPMorgan Chase Bank",
+            "entity_type": "Bank",
+            "country": null
+          },
+          {
+            "name": "Gazprombank",
+            "entity_type": "Bank",
+            "country": null
+          },
+          {
+            "name": "ING Netherland NV",
+            "entity_type": "Bank",
+            "country": null
+          },
+          {
+            "name": "Rigensis Bank AS",
+            "entity_type": "Bank",
+            "country": null
+          },
+          {
+            "name": "Citibank, N.A.",
+            "entity_type": "Bank",
+            "country": null
+          },
+          {
+            "name": "Stanbic Bank",
+            "entity_type": "Bank",
+            "country": null
+          },
+          {
+            "name": "Usb AG",
+            "entity_type": "Bank",
+            "country": null
+          },
+          {
+            "name": "Falcon Private Bank Ltd",
+            "entity_type": "Bank",
+            "country": null
+          },
+          {
+            "name": "Bank of America",
+            "entity_type": "Bank",
+            "country": null
+          }
+        ],
+        "confidence": "high",
+        "data_found": true
+      },
+      "metrics": {},
+      "attributes": {},
+      "scores": {},
+      "labels": {},
+      "assertions": {
+        "IsValidOutputType": {
+          "name": "IsValidOutputType",
+          "value": true,
+          "reason": null,
+          "source": {
+            "name": "IsValidOutputType",
+            "arguments": null
+          }
+        },
+        "RefusalCheck": {
+          "name": "RefusalCheck",
+          "value": true,
+          "reason": "Not a refusal case",
+          "source": {
+            "name": "RefusalCheck",
+            "arguments": null
+          }
+        },
+        "HasEntitiesWhenDataFound": {
+          "name": "HasEntitiesWhenDataFound",
+          "value": true,
+          "reason": "Entities present or `data_found=False`",
+          "source": {
+            "name": "HasEntitiesWhenDataFound",
+            "arguments": null
+          }
+        },
+        "NonEmptyAnswer": {
+          "name": "NonEmptyAnswer",
+          "value": true,
+          "reason": null,
+          "source": {
+            "name": "NonEmptyAnswer",
+            "arguments": null
+          }
+        },
+        "ConfidenceIsReasonable": {
+          "name": "ConfidenceIsReasonable",
+          "value": true,
+          "reason": null,
+          "source": {
+            "name": "ConfidenceIsReasonable",
+            "arguments": null
+          }
+        },
+        "LLMJudge": {
+          "name": "LLMJudge",
+          "value": true,
+          "reason": "The response accurately reflects the data from the FinCEN Files (ICIJ dataset) regarding transaction flows involving Deutsche Bank. It identifies its roles as a filing institution, originator, and beneficiary, and provides specific, verifiable dollar amounts and counterparties that match the historical data.",
+          "source": {
+            "name": "LLMJudge",
+            "arguments": {
+              "rubric": "The response directly and relevantly answers the user's question about FinCEN data. It does not contain fabricated information. If the question is out of scope, the response clearly states this.",
+              "model": "google-gla:gemini-3-flash-preview",
+              "include_input": true
+            }
+          }
+        },
+        "LLMJudge_2": {
+          "name": "LLMJudge",
+          "value": true,
+          "reason": "The response provides specific transaction amounts, dates, and banking entities (e.g., Gazprombank, Rigensis Bank AS, Falcon Private Bank Ltd) that correspond to known data from the FinCEN Files, indicating the information is grounded in actual financial data rather than hallucinated.",
+          "source": {
+            "name": "LLMJudge",
+            "arguments": {
+              "rubric": "The response appears grounded in actual data rather than hallucinated. It references specific entities, amounts, or relationships that could plausibly come from a financial crimes database.",
+              "model": "google-gla:gemini-3-flash-preview",
+              "include_input": true
+            }
+          }
+        }
+      },
+      "task_duration": 22.769652181999845,
+      "total_duration": 29.344195127487183,
+      "source_case_name": null,
+      "trace_id": "00000000000000000000000000000000",
+      "span_id": "0000000000000000",
+      "evaluator_failures": []
+    },
+    {
+      "name": "entity_relationships",
+      "inputs": "What entities are connected to HSBC in the FinCEN data?",
+      "metadata": {
+        "category": "relationship",
+        "difficulty": "medium"
+      },
+      "expected_output": null,
+      "output": {
+        "answer": "In the FinCEN data, HSBC (including various branches like HSBC Bank, HSBC United States, and HSBC Hong Kong) is connected to a wide range of financial institutions and entities through Suspicious Activity Report (SAR) filings. Some of the notable entities connected to HSBC include:\n\n- **BDO Unibank Inc**\n- **Hang Seng Bank, Limited**\n- **The Bank of New York Mellon Corp.**\n- **Bank of China**\n- **Rizal Commercial Banking Corp**\n- **Deutsche Bank AG**\n- **Standard Chartered Plc**\n- **Bank of America, Na**\n- **DBS Bank Ltd**\n- **Credit Suisse**\n\nThese connections typically arise when one entity files a report concerning another, or when both are involved in transactions flagged as suspicious.",
+        "entities_mentioned": [
+          {
+            "name": "HSBC",
+            "entity_type": "Bank",
+            "country": null
+          },
+          {
+            "name": "BDO Unibank Inc",
+            "entity_type": "Bank",
+            "country": null
+          },
+          {
+            "name": "Hang Seng Bank, Limited",
+            "entity_type": "Bank",
+            "country": null
+          },
+          {
+            "name": "The Bank of New York Mellon Corp.",
+            "entity_type": "Bank",
+            "country": null
+          },
+          {
+            "name": "Bank of China",
+            "entity_type": "Bank",
+            "country": null
+          },
+          {
+            "name": "Rizal Commercial Banking Corp",
+            "entity_type": "Bank",
+            "country": null
+          },
+          {
+            "name": "Deutsche Bank AG",
+            "entity_type": "Bank",
+            "country": null
+          },
+          {
+            "name": "Standard Chartered Plc",
+            "entity_type": "Bank",
+            "country": null
+          },
+          {
+            "name": "Bank of America, Na",
+            "entity_type": "Bank",
+            "country": null
+          },
+          {
+            "name": "DBS Bank Ltd",
+            "entity_type": "Bank",
+            "country": null
+          },
+          {
+            "name": "Credit Suisse",
+            "entity_type": "Bank",
+            "country": null
+          }
+        ],
+        "confidence": "high",
+        "data_found": true
+      },
+      "metrics": {},
+      "attributes": {},
+      "scores": {},
+      "labels": {},
+      "assertions": {
+        "IsValidOutputType": {
+          "name": "IsValidOutputType",
+          "value": true,
+          "reason": null,
+          "source": {
+            "name": "IsValidOutputType",
+            "arguments": null
+          }
+        },
+        "RefusalCheck": {
+          "name": "RefusalCheck",
+          "value": true,
+          "reason": "Not a refusal case",
+          "source": {
+            "name": "RefusalCheck",
+            "arguments": null
+          }
+        },
+        "HasEntitiesWhenDataFound": {
+          "name": "HasEntitiesWhenDataFound",
+          "value": true,
+          "reason": "Entities present or `data_found=False`",
+          "source": {
+            "name": "HasEntitiesWhenDataFound",
+            "arguments": null
+          }
+        },
+        "NonEmptyAnswer": {
+          "name": "NonEmptyAnswer",
+          "value": true,
+          "reason": null,
+          "source": {
+            "name": "NonEmptyAnswer",
+            "arguments": null
+          }
+        },
+        "ConfidenceIsReasonable": {
+          "name": "ConfidenceIsReasonable",
+          "value": true,
+          "reason": null,
+          "source": {
+            "name": "ConfidenceIsReasonable",
+            "arguments": null
+          }
+        },
+        "LLMJudge": {
+          "name": "LLMJudge",
+          "value": true,
+          "reason": "The response correctly identifies entities connected to HSBC in the FinCEN Files data, listing major banks that appear in the Suspicious Activity Reports (SARs) published by the ICIJ. The information provided is accurate and directly addresses the user's query.",
+          "source": {
+            "name": "LLMJudge",
+            "arguments": {
+              "rubric": "The response directly and relevantly answers the user's question about FinCEN data. It does not contain fabricated information. If the question is out of scope, the response clearly states this.",
+              "model": "google-gla:gemini-3-flash-preview",
+              "include_input": true
+            }
+          }
+        },
+        "LLMJudge_2": {
+          "name": "LLMJudge",
+          "value": true,
+          "reason": "The output lists specific financial institutions that were indeed part of the FinCEN Files leak and correctly identifies the nature of their connection to HSBC (SAR filings). The entities mentioned, such as BNY Mellon, Deutsche Bank, and Standard Chartered, are accurately represented as having connections to HSBC in that dataset.",
+          "source": {
+            "name": "LLMJudge",
+            "arguments": {
+              "rubric": "The response appears grounded in actual data rather than hallucinated. It references specific entities, amounts, or relationships that could plausibly come from a financial crimes database.",
+              "model": "google-gla:gemini-3-flash-preview",
+              "include_input": true
+            }
+          }
+        }
+      },
+      "task_duration": 10.046984300999611,
+      "total_duration": 13.63278841972351,
+      "source_case_name": null,
+      "trace_id": "00000000000000000000000000000000",
+      "span_id": "0000000000000000",
+      "evaluator_failures": []
+    },
+    {
+      "name": "refuse_weather",
+      "inputs": "What's the weather like in New York?",
+      "metadata": {
+        "category": "refusal",
+        "difficulty": "easy"
+      },
+      "expected_output": null,
+      "output": {
+        "reason": "I'm sorry, I can only answer questions about the FinCEN data."
+      },
+      "metrics": {},
+      "attributes": {},
+      "scores": {},
+      "labels": {},
+      "assertions": {
+        "IsValidOutputType": {
+          "name": "IsValidOutputType",
+          "value": true,
+          "reason": null,
+          "source": {
+            "name": "IsValidOutputType",
+            "arguments": null
+          }
+        },
+        "RefusalCheck": {
+          "name": "RefusalCheck",
+          "value": true,
+          "reason": "Correctly refused: I'm sorry, I can only answer questions about the FinCEN data.",
+          "source": {
+            "name": "RefusalCheck",
+            "arguments": null
+          }
+        },
+        "HasEntitiesWhenDataFound": {
+          "name": "HasEntitiesWhenDataFound",
+          "value": true,
+          "reason": "Not a FinCENResponse",
+          "source": {
+            "name": "HasEntitiesWhenDataFound",
+            "arguments": null
+          }
+        },
+        "NonEmptyAnswer": {
+          "name": "NonEmptyAnswer",
+          "value": true,
+          "reason": null,
+          "source": {
+            "name": "NonEmptyAnswer",
+            "arguments": null
+          }
+        },
+        "ConfidenceIsReasonable": {
+          "name": "ConfidenceIsReasonable",
+          "value": true,
+          "reason": null,
+          "source": {
+            "name": "ConfidenceIsReasonable",
+            "arguments": null
+          }
+        },
+        "LLMJudge": {
+          "name": "LLMJudge",
+          "value": true,
+          "reason": "The question about the weather was out of scope, and the response clearly stated that it can only answer questions about FinCEN data.",
+          "source": {
+            "name": "LLMJudge",
+            "arguments": {
+              "rubric": "The response directly and relevantly answers the user's question about FinCEN data. It does not contain fabricated information. If the question is out of scope, the response clearly states this.",
+              "model": "google-gla:gemini-3-flash-preview",
+              "include_input": true
+            }
+          }
+        },
+        "LLMJudge_2": {
+          "name": "LLMJudge",
+          "value": false,
+          "reason": "The response is a refusal based on scope and does not reference any specific entities, amounts, or relationships from the database as required by the rubric.",
+          "source": {
+            "name": "LLMJudge",
+            "arguments": {
+              "rubric": "The response appears grounded in actual data rather than hallucinated. It references specific entities, amounts, or relationships that could plausibly come from a financial crimes database.",
+              "model": "google-gla:gemini-3-flash-preview",
+              "include_input": true
+            }
+          }
+        }
+      },
+      "task_duration": 2.044598455999221,
+      "total_duration": 5.946096181869507,
+      "source_case_name": null,
+      "trace_id": "00000000000000000000000000000000",
+      "span_id": "0000000000000000",
+      "evaluator_failures": []
+    },
+    {
+      "name": "refuse_code",
+      "inputs": "Write me a Python script to sort a list.",
+      "metadata": {
+        "category": "refusal",
+        "difficulty": "easy"
+      },
+      "expected_output": null,
+      "output": {
+        "reason": "I'm sorry, I can only answer questions about the FinCEN data."
+      },
+      "metrics": {},
+      "attributes": {},
+      "scores": {},
+      "labels": {},
+      "assertions": {
+        "IsValidOutputType": {
+          "name": "IsValidOutputType",
+          "value": true,
+          "reason": null,
+          "source": {
+            "name": "IsValidOutputType",
+            "arguments": null
+          }
+        },
+        "RefusalCheck": {
+          "name": "RefusalCheck",
+          "value": true,
+          "reason": "Correctly refused: I'm sorry, I can only answer questions about the FinCEN data.",
+          "source": {
+            "name": "RefusalCheck",
+            "arguments": null
+          }
+        },
+        "HasEntitiesWhenDataFound": {
+          "name": "HasEntitiesWhenDataFound",
+          "value": true,
+          "reason": "Not a FinCENResponse",
+          "source": {
+            "name": "HasEntitiesWhenDataFound",
+            "arguments": null
+          }
+        },
+        "NonEmptyAnswer": {
+          "name": "NonEmptyAnswer",
+          "value": true,
+          "reason": null,
+          "source": {
+            "name": "NonEmptyAnswer",
+            "arguments": null
+          }
+        },
+        "ConfidenceIsReasonable": {
+          "name": "ConfidenceIsReasonable",
+          "value": true,
+          "reason": null,
+          "source": {
+            "name": "ConfidenceIsReasonable",
+            "arguments": null
+          }
+        },
+        "LLMJudge": {
+          "name": "LLMJudge",
+          "value": true,
+          "reason": "The response correctly identifies that the user's request is out of scope (since it is about general Python programming rather than FinCEN data) and clearly states its limitation as per the rubric's instructions for out-of-scope questions.",
+          "source": {
+            "name": "LLMJudge",
+            "arguments": {
+              "rubric": "The response directly and relevantly answers the user's question about FinCEN data. It does not contain fabricated information. If the question is out of scope, the response clearly states this.",
+              "model": "google-gla:gemini-3-flash-preview",
+              "include_input": true
+            }
+          }
+        },
+        "LLMJudge_2": {
+          "name": "LLMJudge",
+          "value": false,
+          "reason": "The output is a refusal message that does not contain any data, entities, amounts, or relationships from a database.",
+          "source": {
+            "name": "LLMJudge",
+            "arguments": {
+              "rubric": "The response appears grounded in actual data rather than hallucinated. It references specific entities, amounts, or relationships that could plausibly come from a financial crimes database.",
+              "model": "google-gla:gemini-3-flash-preview",
+              "include_input": true
+            }
+          }
+        }
+      },
+      "task_duration": 2.0969037469994873,
+      "total_duration": 6.895883321762085,
+      "source_case_name": null,
+      "trace_id": "00000000000000000000000000000000",
+      "span_id": "0000000000000000",
+      "evaluator_failures": []
+    },
+    {
+      "name": "refuse_opinion",
+      "inputs": "What do you think about cryptocurrency regulation?",
+      "metadata": {
+        "category": "refusal",
+        "difficulty": "medium"
+      },
+      "expected_output": null,
+      "output": {
+        "reason": "I'm sorry, I can only answer questions about the FinCEN data."
+      },
+      "metrics": {},
+      "attributes": {},
+      "scores": {},
+      "labels": {},
+      "assertions": {
+        "IsValidOutputType": {
+          "name": "IsValidOutputType",
+          "value": true,
+          "reason": null,
+          "source": {
+            "name": "IsValidOutputType",
+            "arguments": null
+          }
+        },
+        "RefusalCheck": {
+          "name": "RefusalCheck",
+          "value": true,
+          "reason": "Correctly refused: I'm sorry, I can only answer questions about the FinCEN data.",
+          "source": {
+            "name": "RefusalCheck",
+            "arguments": null
+          }
+        },
+        "HasEntitiesWhenDataFound": {
+          "name": "HasEntitiesWhenDataFound",
+          "value": true,
+          "reason": "Not a FinCENResponse",
+          "source": {
+            "name": "HasEntitiesWhenDataFound",
+            "arguments": null
+          }
+        },
+        "NonEmptyAnswer": {
+          "name": "NonEmptyAnswer",
+          "value": true,
+          "reason": null,
+          "source": {
+            "name": "NonEmptyAnswer",
+            "arguments": null
+          }
+        },
+        "ConfidenceIsReasonable": {
+          "name": "ConfidenceIsReasonable",
+          "value": true,
+          "reason": null,
+          "source": {
+            "name": "ConfidenceIsReasonable",
+            "arguments": null
+          }
+        },
+        "LLMJudge": {
+          "name": "LLMJudge",
+          "value": true,
+          "reason": "The model correctly identified that the question was outside of its specific scope (FinCEN data) and clearly stated its limitation, as required by the rubric for out-of-scope questions.",
+          "source": {
+            "name": "LLMJudge",
+            "arguments": {
+              "rubric": "The response directly and relevantly answers the user's question about FinCEN data. It does not contain fabricated information. If the question is out of scope, the response clearly states this.",
+              "model": "google-gla:gemini-3-flash-preview",
+              "include_input": true
+            }
+          }
+        },
+        "LLMJudge_2": {
+          "name": "LLMJudge",
+          "value": false,
+          "reason": "The response is a refusal to answer the question and does not contain any specific entities, amounts, or relationships grounded in data as required by the rubric.",
+          "source": {
+            "name": "LLMJudge",
+            "arguments": {
+              "rubric": "The response appears grounded in actual data rather than hallucinated. It references specific entities, amounts, or relationships that could plausibly come from a financial crimes database.",
+              "model": "google-gla:gemini-3-flash-preview",
+              "include_input": true
+            }
+          }
+        }
+      },
+      "task_duration": 4.392334622999442,
+      "total_duration": 11.26587700843811,
+      "source_case_name": null,
+      "trace_id": "00000000000000000000000000000000",
+      "span_id": "0000000000000000",
+      "evaluator_failures": []
+    },
+    {
+      "name": "nonexistent_entity",
+      "inputs": "Tell me about transactions involving XYZ Fake Corp.",
+      "metadata": {
+        "category": "edge_case",
+        "difficulty": "medium"
+      },
+      "expected_output": null,
+      "output": {
+        "reason": "I could not find any information or transactions involving 'XYZ Fake Corp' in the FinCEN dataset."
+      },
+      "metrics": {},
+      "attributes": {},
+      "scores": {},
+      "labels": {},
+      "assertions": {
+        "IsValidOutputType": {
+          "name": "IsValidOutputType",
+          "value": true,
+          "reason": null,
+          "source": {
+            "name": "IsValidOutputType",
+            "arguments": null
+          }
+        },
+        "RefusalCheck": {
+          "name": "RefusalCheck",
+          "value": true,
+          "reason": "Not a refusal case",
+          "source": {
+            "name": "RefusalCheck",
+            "arguments": null
+          }
+        },
+        "HasEntitiesWhenDataFound": {
+          "name": "HasEntitiesWhenDataFound",
+          "value": true,
+          "reason": "Not a FinCENResponse",
+          "source": {
+            "name": "HasEntitiesWhenDataFound",
+            "arguments": null
+          }
+        },
+        "NonEmptyAnswer": {
+          "name": "NonEmptyAnswer",
+          "value": true,
+          "reason": null,
+          "source": {
+            "name": "NonEmptyAnswer",
+            "arguments": null
+          }
+        },
+        "ConfidenceIsReasonable": {
+          "name": "ConfidenceIsReasonable",
+          "value": true,
+          "reason": null,
+          "source": {
+            "name": "ConfidenceIsReasonable",
+            "arguments": null
+          }
+        },
+        "LLMJudge": {
+          "name": "LLMJudge",
+          "value": true,
+          "reason": "The response accurately states that no information was found for the specified entity in the dataset, which is a direct and relevant answer that avoids fabrication.",
+          "source": {
+            "name": "LLMJudge",
+            "arguments": {
+              "rubric": "The response directly and relevantly answers the user's question about FinCEN data. It does not contain fabricated information. If the question is out of scope, the response clearly states this.",
+              "model": "google-gla:gemini-3-flash-preview",
+              "include_input": true
+            }
+          }
+        },
+        "LLMJudge_2": {
+          "name": "LLMJudge",
+          "value": false,
+          "reason": "The output correctly identifies that no information was found for the entity, which avoids hallucination. However, the rubric specifically requires that the response 'references specific entities, amounts, or relationships that could plausibly come from a financial crimes database.' Since the output provides no such data points, it does not fulfill the criteria described in the rubric.",
+          "source": {
+            "name": "LLMJudge",
+            "arguments": {
+              "rubric": "The response appears grounded in actual data rather than hallucinated. It references specific entities, amounts, or relationships that could plausibly come from a financial crimes database.",
+              "model": "google-gla:gemini-3-flash-preview",
+              "include_input": true
+            }
+          }
+        }
+      },
+      "task_duration": 7.741575983000075,
+      "total_duration": 20.906497955322266,
+      "source_case_name": null,
+      "trace_id": "00000000000000000000000000000000",
+      "span_id": "0000000000000000",
+      "evaluator_failures": []
+    },
+    {
+      "name": "vague_query",
+      "inputs": "Tell me about money.",
+      "metadata": {
+        "category": "edge_case",
+        "difficulty": "hard"
+      },
+      "expected_output": null,
+      "output": {
+        "answer": "In the context of the FinCEN dataset, 'money' refers to the financial transactions reported in Suspicious Activity Reports (SARs) filed by financial institutions. \n\nThe data contains 4,507 filings representing a total amount of approximately $35.68 billion. Individual filing amounts vary significantly, ranging from as little as $1.18 to as much as $2.72 billion.\n\nThe top financial institutions by total reported amount include:\n- The Bank of New York Mellon Corp. (approx. $23.64 billion)\n- Deutsche Bank AG (approx. $6.14 billion)\n- JP Morgan Chase & Co. (approx. $2.40 billion)\n- Standard Chartered Plc (approx. $1.65 billion)\n- Société Générale SA (approx. $1.28 billion)",
+        "entities_mentioned": [
+          {
+            "name": "The Bank of New York Mellon Corp.",
+            "entity_type": "Bank",
+            "country": null
+          },
+          {
+            "name": "Deutsche Bank AG",
+            "entity_type": "Bank",
+            "country": null
+          },
+          {
+            "name": "JP Morgan Chase & Co.",
+            "entity_type": "Bank",
+            "country": null
+          },
+          {
+            "name": "Standard Chartered Plc",
+            "entity_type": "Bank",
+            "country": null
+          },
+          {
+            "name": "Société Générale SA",
+            "entity_type": "Bank",
+            "country": null
+          }
+        ],
+        "confidence": "high",
+        "data_found": true
+      },
+      "metrics": {},
+      "attributes": {},
+      "scores": {},
+      "labels": {},
+      "assertions": {
+        "IsValidOutputType": {
+          "name": "IsValidOutputType",
+          "value": true,
+          "reason": null,
+          "source": {
+            "name": "IsValidOutputType",
+            "arguments": null
+          }
+        },
+        "RefusalCheck": {
+          "name": "RefusalCheck",
+          "value": true,
+          "reason": "Not a refusal case",
+          "source": {
+            "name": "RefusalCheck",
+            "arguments": null
+          }
+        },
+        "HasEntitiesWhenDataFound": {
+          "name": "HasEntitiesWhenDataFound",
+          "value": true,
+          "reason": "Entities present or `data_found=False`",
+          "source": {
+            "name": "HasEntitiesWhenDataFound",
+            "arguments": null
+          }
+        },
+        "NonEmptyAnswer": {
+          "name": "NonEmptyAnswer",
+          "value": true,
+          "reason": null,
+          "source": {
+            "name": "NonEmptyAnswer",
+            "arguments": null
+          }
+        },
+        "ConfidenceIsReasonable": {
+          "name": "ConfidenceIsReasonable",
+          "value": true,
+          "reason": null,
+          "source": {
+            "name": "ConfidenceIsReasonable",
+            "arguments": null
+          }
+        },
+        "LLMJudge": {
+          "name": "LLMJudge",
+          "value": true,
+          "reason": "The response correctly interprets the broad query \"Tell me about money\" within the context of its specialized FinCEN dataset. It provides specific, verifiable figures (4,507 filings, ~$35.68 billion total) and lists the top financial institutions consistent with public samples of the FinCEN Files data, avoiding fabrication.",
+          "source": {
+            "name": "LLMJudge",
+            "arguments": {
+              "rubric": "The response directly and relevantly answers the user's question about FinCEN data. It does not contain fabricated information. If the question is out of scope, the response clearly states this.",
+              "model": "google-gla:gemini-3-flash-preview",
+              "include_input": true
+            }
+          }
+        },
+        "LLMJudge_2": {
+          "name": "LLMJudge",
+          "value": true,
+          "reason": "The output provides specific, plausible data points (total amount of $35.68 billion, specific banks with corresponding dollar amounts) that align with the publicly known FinCEN Files dataset, demonstrating grounding in financial data rather than generic or hallucinated information.",
+          "source": {
+            "name": "LLMJudge",
+            "arguments": {
+              "rubric": "The response appears grounded in actual data rather than hallucinated. It references specific entities, amounts, or relationships that could plausibly come from a financial crimes database.",
+              "model": "google-gla:gemini-3-flash-preview",
+              "include_input": true
+            }
+          }
+        }
+      },
+      "task_duration": 10.153918044999955,
+      "total_duration": 16.155344247817993,
+      "source_case_name": null,
+      "trace_id": "00000000000000000000000000000000",
+      "span_id": "0000000000000000",
+      "evaluator_failures": []
+    }
+  ],
+  "failures": [],
+  "analyses": [],
+  "report_evaluator_failures": [],
+  "experiment_metadata": null,
+  "trace_id": "00000000000000000000000000000000",
+  "span_id": "0000000000000000"
+}
