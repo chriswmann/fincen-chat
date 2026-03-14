@@ -1,3 +1,4 @@
+import base64
 from typing import Callable, TypeVar
 from functools import lru_cache
 from pydantic import AliasChoices, Field, SecretStr
@@ -48,6 +49,11 @@ class Neo4jConfig(BaseSettings):
     neo4j_port: int
     neo4j_mcp_url: str
 
+    def get_encoded_credentials(self) -> str:
+        return base64.b64encode(
+            f"{self.neo4j_username}:{self.neo4j_password.get_secret_value()}".encode()
+        ).decode()
+
 
 class PostgresConfig(BaseSettings):
     model_config = SettingsConfigDict(
@@ -71,6 +77,16 @@ class PostgresConfig(BaseSettings):
         )
 
 
+class TemporalConfig(BaseSettings):
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        extra="ignore",
+    )
+    temporal_address: str
+    temporal_task_queue: str
+
+
 def _cached_config(cls: type[T]) -> Callable[[], T]:
     @lru_cache()
     def factory() -> T:
@@ -83,3 +99,4 @@ get_agent_config = _cached_config(AgentConfig)
 get_neo4j_config = _cached_config(Neo4jConfig)
 get_langfuse_config = _cached_config(LangfuseConfig)
 get_postgres_config = _cached_config(PostgresConfig)
+get_temporal_config = _cached_config(TemporalConfig)

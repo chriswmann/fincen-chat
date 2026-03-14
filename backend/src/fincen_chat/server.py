@@ -9,6 +9,8 @@ from fastapi.responses import StreamingResponse
 from pydantic import UUID4
 from pydantic_ai import Agent
 from pydantic_ai.messages import ModelMessage
+from temporalio.client import Client
+from pydantic_ai.durable_exec.temporal import PydanticAIPlugin
 from .agent import get_agent_with_neo4j_mcp_toolset, init_langfuse
 from .chat_repo import (
     MessageGrouper,
@@ -23,7 +25,9 @@ from .config import (
     get_neo4j_config,
     get_langfuse_config,
     get_postgres_config,
+    get_temporal_config,
 )
+from .investigation.router import router as investigation_router
 from .models import AgentOutput, ChatRequest, FinCENResponse
 
 logger = logging.Logger(__file__)
@@ -42,6 +46,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     neo4j_config = get_neo4j_config()
     langfuse_config = get_langfuse_config()
     postgres_config = get_postgres_config()
+    temporal_config = get_temporal_config()
 
     init_langfuse(langfuse_config)
     logger.info("Initialising database pool")
@@ -55,6 +60,10 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     app.state.agent = get_agent_with_neo4j_mcp_toolset(
         agent_config=agent_config,
         neo4j_config=neo4j_config,
+    )
+
+    app.state.temporal_client = await Client.connect(
+        temporal_config.temporal_address, plugins=[PydanticAIPlugin()]
     )
 
     yield
@@ -186,6 +195,7 @@ async def chat_request(
 
 
 app.include_router(router=router, prefix="/api")
+app.include_router(router=investigation_router, prefix="/api/v1")
 
 
 # Health check

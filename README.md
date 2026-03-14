@@ -11,6 +11,47 @@ This project serves as a practical demonstration of modern GenAI engineering pat
 * **Self-Reflection & Validation**: Domain-level validation is used to verify the LLM's output. For example, if the model indicates data was found but returns an empty answer, a retry is triggered, prompting the agent to correct itself.
 * **Observability**: The agent is instrumented with Langfuse for detailed tracing, providing visibility into the broader LLM calls, tool usage, and prompt execution.
 * **Evaluation**: An evaluation suite powered by `pydantic-evals` helps measure the agent's performance and accuracy against a dataset of test cases over time.
+* **Durable Multi-Agent Orchestration**: A deep research investigation mode uses [Temporal](https://temporal.io) to orchestrate a three-agent workflow (planner, researcher, synthesiser) with durable execution guarantees. Each step is automatically retried on failure and completed steps are never re-executed.
+
+### Investigation Workflow
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant FastAPI
+    participant Temporal as Temporal Server
+    participant Planner as Planning Agent
+    participant Researcher as Research Agent
+    participant Synthesiser as Synthesis Agent
+    participant Neo4j as Neo4j MCP
+
+    User->>FastAPI: POST /api/v1/investigations
+    FastAPI->>Temporal: Start InvestigationWorkflow
+    FastAPI-->>User: investigation_id
+
+    Temporal->>Planner: Decompose query
+    Planner-->>Temporal: ResearchPlan with sub-queries
+
+    loop For each sub-query
+        Temporal->>Researcher: Execute sub-query
+        Researcher->>Neo4j: Query graph via MCP
+        Neo4j-->>Researcher: Graph data
+        Researcher-->>Temporal: SubQueryResult
+    end
+
+    Temporal->>Synthesiser: Synthesise all findings
+    Synthesiser-->>Temporal: InvestigationReport
+
+    User->>FastAPI: GET /investigations/{id}/status
+    FastAPI->>Temporal: Query workflow state
+    Temporal-->>FastAPI: Status and progress
+    FastAPI-->>User: Status response
+
+    User->>FastAPI: GET /investigations/{id}/result
+    FastAPI->>Temporal: Get workflow result
+    Temporal-->>FastAPI: InvestigationReport
+    FastAPI-->>User: Full report
+```
 
 ## Usage
 
