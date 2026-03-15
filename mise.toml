@@ -39,6 +39,7 @@ run = """
 #!/usr/bin/env bash
 set -e
 
+export PYTHONPATH=backend/src
 uv run python -m uvicorn fincen_chat.server:app --app-dir backend/src --reload --port 8080 &
 uv run python -m fincen_chat.investigation.worker &
 npm --prefix ./frontend/ run dev

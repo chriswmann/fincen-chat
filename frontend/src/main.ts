@@ -313,7 +313,7 @@ investigationSubmitButton.addEventListener("click", async (e: Event) => {
         return;
       }
 
-      investigationStatusDiv.textContent = `Status: ${statusData.status} (Step ${statusData.progresss} of ${statusData.total_steps} || ` ? `})`;
+      investigationStatusDiv.textContent = `Status: ${statusData.status} (Step ${statusData.progresss} of ${statusData.total_steps} || " ? "})`;
 
       if (statusData.status === "complete") {
         clearInterval(pollingInterval!);
@@ -326,14 +326,14 @@ investigationSubmitButton.addEventListener("click", async (e: Event) => {
         investigationInputDiv.disabled = false;
         investigationSubmitButton.disabled = false;
         investigationInputDiv.value = "";
-      } catch (err) {
-        clearInterval(pollingInterval!);
-        const errorMessage = err instanceof Error ? err.message | "Unknown Error";
-        investigationStatusDiv.textContent = `Polling Error: ${errorMessage}`;
-        investigationStatusDiv.className = "investigationError";
-        investigationInputDiv.disabled = false;
-        investigationSubmitButton.disabled = false;
       }
+    } catch (err) {
+      clearInterval(pollingInterval!);
+      const errorMessage = err instanceof Error ? err.message : "Unknown Error";
+      investigationStatusDiv.textContent = `Polling Error: ${errorMessage}`;
+      investigationStatusDiv.className = "investigationError";
+      investigationInputDiv.disabled = false;
+      investigationSubmitButton.disabled = false;
     }
   }, 2000);
 });

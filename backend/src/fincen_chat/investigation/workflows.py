@@ -1,7 +1,8 @@
 from temporalio import workflow
 from pydantic_ai.durable_exec.temporal import PydanticAIWorkflow
 
-from .agents import temporal_planner, temporal_researcher, temporal_sythesiser
+with workflow.unsafe.imports_passed_through():
+    from .agents import temporal_planner, temporal_researcher, temporal_sythesiser
 from .models import (
     InvestigationInput,
     InvestigationReport,
