@@ -24,10 +24,22 @@ _neo4j = get_neo4j_config()
 _credentials = _neo4j.get_encoded_credentials()
 
 def _get_neo4j_mcp() -> MCPServerStreamableHTTP:
+    """Return an MCP server rather than having it in the 
+    global state.
+
+    Since multiple Temporal tasks will be running this concurrently, 
+    we need to create a new MCP server for each task.
+    """
     return MCPServerStreamableHTTP(
         _neo4j.neo4j_mcp_url,
         headers={"Authorization": f"Basic {_credentials}"},
         tool_prefix="neo4j",  # Sets the toolset ID for Temporal activity naming
+        # Disable cache_tools to prevent Temporal nondeterminism.
+        # TemporalMCPServer uses a worker-local cache that causes get_tools
+        # activities to be skipped on replay when the cache is warm. This results in 
+        # a non-determinism error being raised as Temporal sees a `model_request` call 
+        # instead of a `get_tools` call.
+        cache_tools=False,
     )
 
 research_agent = Agent(
