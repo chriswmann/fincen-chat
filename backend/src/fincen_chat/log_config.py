@@ -19,10 +19,11 @@ def setup_logging() -> None:
     config = read_config(LOG_CONFIG_PATH)
     log_file = Path(config["handlers"]["file"]["filename"])
     if LIB_LOG_LEVEL is not None:
-        config["loggers"]["temporalio"]["level"] = LIB_LOG_LEVEL
-        config["loggers"]["pydantic"]["level"] = LIB_LOG_LEVEL
-        config["loggers"]["pydantic_ai"]["level"] = LIB_LOG_LEVEL
-        config["loggers"]["langfuse"]["level"] = LIB_LOG_LEVEL
+        level = LIB_LOG_LEVEL.upper()
+        config["loggers"]["temporalio"]["level"] = level
+        config["loggers"]["pydantic"]["level"] = level
+        config["loggers"]["pydantic_ai"]["level"] = level
+        config["loggers"]["langfuse"]["level"] = level
     log_file.parent.mkdir(parents=True, exist_ok=True)
 
     logging.config.dictConfig(config=config)
