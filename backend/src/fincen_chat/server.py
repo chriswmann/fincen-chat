@@ -28,6 +28,7 @@ from .config import (
     get_temporal_config,
 )
 from .investigation.router import router as investigation_router
+from .log_config import setup_logging
 from .models import AgentOutput, ChatRequest, FinCENResponse
 
 logger = logging.Logger(__file__)
@@ -41,6 +42,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     before the server starts accepting requests and runs the teardown code
     (after the `yield`) when the server shuts down.
     """
+    setup_logging()
 
     agent_config = get_agent_config()
     neo4j_config = get_neo4j_config()

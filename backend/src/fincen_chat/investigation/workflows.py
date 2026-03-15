@@ -1,3 +1,4 @@
+import logging
 from temporalio import workflow
 from pydantic_ai.durable_exec.temporal import PydanticAIWorkflow
 
@@ -12,6 +13,7 @@ from .models import (
     SubQueryResult,
 )
 
+logger = logging.Logger(__name__)
 
 @workflow.defn
 class InvestigationWorkflow(PydanticAIWorkflow):

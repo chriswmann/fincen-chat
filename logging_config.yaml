@@ -22,6 +22,24 @@ handlers:
     backupCount: 5
     encoding: utf-8
 
+loggers:
+  temporalio:
+    level: INFO
+    handlers: [file]
+    propagate: false
+  pydantic:
+    level: INFO
+    handlers: [file]
+    propagate: false
+  pydantic_ai:
+    level: INFO
+    handlers: [file]
+    propagate: false
+  langfuse:
+    level: INFO
+    handlers: [file]
+    propagate: false
+
 root:
   level: INFO
   handlers: [console, file]
