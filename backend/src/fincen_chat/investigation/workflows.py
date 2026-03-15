@@ -1,5 +1,6 @@
 import logging
 from temporalio import workflow
+from pydantic_ai import UsageLimits
 from pydantic_ai.durable_exec.temporal import PydanticAIWorkflow
 
 with workflow.unsafe.imports_passed_through():
@@ -40,7 +41,9 @@ class InvestigationWorkflow(PydanticAIWorkflow):
         findings: list[SubQueryResult] = []
         for subquery in plan.sub_queries:
             self._progress += 1
-            result = await temporal_researcher.run(subquery.query)
+            result = await temporal_researcher.run(
+                subquery.query, usage_limits=UsageLimits(request_limit=100)
+            )
             findings.append(result.output)
 
         self._status = InvestigationWorkflowState.SYNTHESISING
