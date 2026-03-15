@@ -26,7 +26,7 @@ services:
     restart: on-failure
     depends_on:
       neo4j:
-        condition: service_healthy
+        condition: service_started
     environment:
       - NEO4J_URI=bolt://neo4j:${NEO4J_PORT}
       - NEO4J_TRANSPORT_MODE=http
@@ -217,7 +217,20 @@ services:
     ports:
       - "127.0.0.1:7233:7233"
     environment:
-       - DB=sqlite
+      - DB=postgres12
+      - DB_PORT=${POSTGRES_PORT}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PWD=${POSTGRES_PASSWORD}
+      - POSTGRES_SEEDS=postgres
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "temporal operator cluster health --address $$(hostname -i):7233"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
 
   temporal-ui:
     image: temporalio/ui:latest
