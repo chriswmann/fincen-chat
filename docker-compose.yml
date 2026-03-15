@@ -217,14 +217,17 @@ services:
     ports:
       - "127.0.0.1:7233:7233"
     environment:
-      DB=sqlite
+       - DB=sqlite
 
   temporal-ui:
     image: temporalio/ui:latest
+    depends_on:
+      temporal:
+        condition: service_healthy
     ports:
-      - "127.0.0.1:8233:8233"
+      - "127.0.0.1:8233:8080"
     environment:
-      - TEMPORAL_ADDRESS=http://temporal:7233
+      - TEMPORAL_ADDRESS=temporal:7233
       - TEMPORAL_CORS_ORIGINS=localhost:8233
 
 volumes:

@@ -40,6 +40,7 @@ run = """
 set -e
 
 uv run python -m uvicorn fincen_chat.server:app --app-dir backend/src --reload --port 8080 &
+uv run python -m fincen_chat.investigation.worker &
 npm --prefix ./frontend/ run dev
 wait
 """

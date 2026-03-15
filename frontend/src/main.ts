@@ -92,7 +92,7 @@ function parseSSEEvents(raw: string): { events: SSEEvent[]; remaining: string } 
 async function sendMessage(message: string): Promise<void> {
   const assistantDiv = appendMessage('assistant', '');
 
-  const submitButton = document.querySelector<HTMLButtonElement>('button')!;
+  const submitButton = getElement<HTMLButtonElement>('button');
   input.disabled = true;
   submitButton.disabled = true;
   let rawMarkdown = '';
@@ -209,3 +209,179 @@ form.addEventListener('submit', async (e: Event) => {
 
   await sendMessage(message);
 })
+
+// --- Investigation mode ---
+const chatTab = getElement<HTMLButtonElement>("#chat-tab");
+const investigationTab = getElement<HTMLButtonElement>("#investigation-tab");
+const chatPanel = getElement<HTMLDivElement>("#chat-panel");
+const investigationPanel = getElement<HTMLDivElement>("#investigation-panel");
+
+chatTab.addEventListener("click", () => {
+  chatTab.classList.add("active");
+  investigationTab.classList.remove("active");
+  chatPanel.removeAttribute("hidden");
+  investigationPanel.setAttribute("hidden", "");
+});
+
+investigationTab.addEventListener("click", () => {
+  investigationTab.classList.add("active");
+  chatTab.classList.remove("active");
+  investigationPanel.removeAttribute("hidden");
+  chatPanel.setAttribute("hidden", "");
+});
+
+// --- Investigation logic ---
+const investigationSubmitButton = getElement<HTMLButtonElement>("#investigation-submit-button");
+const investigationInputDiv = getElement<HTMLTextAreaElement>("#investigation-input");
+const investigationStatusDiv = getElement<HTMLDivElement>("#investigation-status");
+const investigationReportDiv = getElement<HTMLDivElement>("#investigation-report");
+
+async function submitInvestigation(query: string): Promise<string | null> {
+  // Disable UI during submission
+  investigationInputDiv.disabled = true;
+  investigationSubmitButton.disabled = true;
+  investigationStatusDiv.textContent = "Starting investigation...";
+  investigationStatusDiv.className = "";
+  investigationReportDiv.innerHTML = "";
+
+
+  try {
+    const response = await fetch("/api/v1/investigations", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ query }),
+    })
+
+    if (!response.ok) {
+      throw new Error(`Server error: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data.investigation_id;
+  } catch (err) {
+    const errorMessage = err instanceof Error ? err.message : "Unknown Error";
+    investigationStatusDiv.textContent = `Error: ${errorMessage}`;
+    investigationStatusDiv.className = "investigationError";
+    // Re-enable UI on failure
+    investigationInputDiv.disabled = false;
+    investigationSubmitButton.disabled = false;
+  }
+  return null;
+}
+
+async function pollStatus(investigationId: string): Promise<string> {
+  const response = await fetch(`/api/v1/investigations/${investigationId}/status`);
+  if (!response.ok) {
+    throw new Error(`Server error: ${response.status}`);
+  }
+  return response.json();
+}
+
+async function getResult(investigationId: string): Promise<string> {
+  const response = await fetch(`/api/v1/investigations/${investigationId}/result`);
+  if (!response.ok) {
+    throw new Error(`Server error: ${response.status}`);
+  }
+  return response.json();
+}
+
+let pollingInterval: number | null = null;
+
+// Handle on the 'Investigate' button click
+investigationSubmitButton.addEventListener("click", async (e: Event) => {
+  e.preventDefault();
+  const query = investigationInputDiv.value.trim();
+  if (!query) return;
+
+  const investigationId = await submitInvestigation(query);
+  if (!investigationId) return;
+
+  // Clear interval if one already exists
+  if (pollingInterval) clearInterval(pollingInterval);
+
+  // Start polling for status updates every two seconds
+  pollingInterval = window.setInterval(async () => {
+    try {
+      const statusData = await pollStatus(investigationId);
+
+      if (statusData.status === "failed") {
+        investigationStatusDiv.textContent = "Investigation failed.";
+        investigationStatusDiv.className = "investigationError";
+        clearInterval(pollingInterval!);
+        investigationInputDiv.disabled = false;
+        investigationSubmitButton.disabled = false;
+        return;
+      }
+
+      investigationStatusDiv.textContent = `Status: ${statusData.status} (Step ${statusData.progresss} of ${statusData.total_steps} || ` ? `})`;
+
+      if (statusData.status === "complete") {
+        clearInterval(pollingInterval!);
+        investigationStatusDiv.textContent = "Investigation completed.";
+
+        // Fetch and display the final report
+        const report = await getResult(investigationId);
+        renderReport(report);
+
+        investigationInputDiv.disabled = false;
+        investigationSubmitButton.disabled = false;
+        investigationInputDiv.value = "";
+      } catch (err) {
+        clearInterval(pollingInterval!);
+        const errorMessage = err instanceof Error ? err.message | "Unknown Error";
+        investigationStatusDiv.textContent = `Polling Error: ${errorMessage}`;
+        investigationStatusDiv.className = "investigationError";
+        investigationInputDiv.disabled = false;
+        investigationSubmitButton.disabled = false;
+      }
+    }
+  }, 2000);
+});
+
+// Render the final report into the #investigation-report div
+async function renderReport(report: any) {
+  let markdown = `# ${report.title}\n\n`;
+  markdown += `**Confidence Score:** ${report.confidence}\n\n`;
+
+  markdown += `## Executive Summary\n${report.executive_summary}\n\n`;
+  markdown += `## Detailed Findings\n${report.detailed_findings}\n\n`;
+
+  markdown += "## Key Entitiies Involved\n";
+  if (report.entities_involved && report.entities_involved.length > 0) {
+    report.entities_involved.forEach((e: any) => {
+      markdown += `* ${e.name} (${e.type || "Unknown"})\n`;
+    });
+  } else {
+    markdown += " - None identified\n";
+  }
+  markdown += "\n";
+  markdown += "## Risk Indicators\n";
+  if (report.risk_indicators && report.risk_indicators.length > 0) {
+    report.risk_indicators.forEach((r: string) => {
+      markdown += ` - ${r}\n`;
+    });
+  } else {
+    markdown += " - None identified\n";
+  }
+  markdown += "\n";
+
+  markdown += "## Recommendations\n";
+  if (report.recommendations && report.recommendations.length > 0) {
+    report.recommendations.forEach((r: string) => {
+      markdown += ` - ${r}\n`;
+    });
+  } else {
+    markdown += " - None identified\n";
+  }
+  markdown += "\n";
+
+  // Render the markdown to the #investigation-report div
+  investigationReportDiv.innerHTML = await marked.parse(markdown);
+}
+
+
+function getElement<T extends Element>(selector: string): T {
+  const element = document.querySelector<T>(selector);
+  if (!element) throw new Error(`Element with selector ${selector} not found`);
+  return element;
+}

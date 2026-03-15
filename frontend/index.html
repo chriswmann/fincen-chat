@@ -1,27 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>FinCEN Agent</title>
   <link rel="stylesheet" href="/src/style.css" />
 </head>
+
 <body>
   <div id="app">
     <header>
       <h1>FinCEN Agent</h1>
+      <div id="mode-toggle">
+        <button id="chat-tab" class="tab active">Chat</button>
+        <button id="investigation-tab" class="tab">Investigation</button>
+      </div>
     </header>
-    <main id="chat-messages">
-      <!-- Messages appear here dynamically -->
-    </main>
-    <footer>
-      <form id="chat-form">
-        <input type="text" id="message-input"
-               placeholder="Ask about FinCEN data..." autocomplete="off" />
-        <button type="submit">Send</button>
-      </form>
-    </footer>
+    <div id="chat-panel">
+      <main id="chat-messages">
+        <!-- Messages appear here dynamically -->
+      </main>
+      <footer>
+        <form id="chat-form">
+          <input type="text" id="message-input" placeholder="Ask about FinCEN data..." autocomplete="off" />
+          <button type="submit">Send</button>
+        </form>
+      </footer>
+    </div>
+    <div id="investigation-panel" hiddne>
+      <div id="investigation-form">
+        <textarea id="investigation-input" placeholder="Enter your investigation query..." rows="4"
+          autocomplete="on"></textarea>
+        <button id="investigation-submit" type="submit">Investigate</button>
+      </div>
+      <div id="investigation-status"></div>
+      <div id="investigation-report"></div>
+    </div>
   </div>
   <script type="module" src="/src/main.ts"></script>
 </body>
+
 </html>

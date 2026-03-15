@@ -7,6 +7,7 @@ from ..config import get_agent_config, get_neo4j_config
 _config = get_agent_config()
 
 planning_agent = Agent(
+    _config.model,
     output_type=ResearchPlan,
     instructions="""You are a research planner for FinCEN financial crime investigations.
     Given a user's investigation query, decompose it into 3-6 focused sub-queries
