@@ -266,6 +266,10 @@ footer {
   display: none;
 }
 
+#chat-panel[hidden] {
+  display: none;
+}
+
 
 /* ── Investigation panel ─────────────────────────────────────────── */
 #investigation-form {
