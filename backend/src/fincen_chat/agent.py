@@ -1,19 +1,10 @@
 import base64
-from langfuse import Langfuse
 from pydantic_ai import Agent, ModelRetry
 from pydantic_ai.mcp import MCPServerStreamableHTTP
 from .config import AgentConfig, LangfuseConfig, Neo4jConfig, REFUSAL_MESSAGE
 from .models import AgentOutput, FinCENResponse
 
 
-def init_langfuse(config: LangfuseConfig) -> Langfuse:
-    langfuse = Langfuse(
-        public_key=config.langfuse_public_key,
-        secret_key=config.langfuse_secret_key.get_secret_value(),
-        host=config.langfuse_host,
-    )
-    langfuse.auth_check()
-    return langfuse
 
 
 def get_agent_with_neo4j_mcp_toolset(

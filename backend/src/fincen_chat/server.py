@@ -11,7 +11,7 @@ from pydantic_ai import Agent
 from pydantic_ai.messages import ModelMessage
 from temporalio.client import Client
 from pydantic_ai.durable_exec.temporal import PydanticAIPlugin
-from .agent import get_agent_with_neo4j_mcp_toolset, init_langfuse
+from .agent import get_agent_with_neo4j_mcp_toolset
 from .chat_repo import (
     MessageGrouper,
     create_chat,
@@ -26,6 +26,7 @@ from .config import (
     get_langfuse_config,
     get_postgres_config,
     get_temporal_config,
+    init_langfuse,
 )
 from .investigation.router import router as investigation_router
 from .log_config import setup_logging

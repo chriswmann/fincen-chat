@@ -1,13 +1,13 @@
 import base64
 from typing import Callable, TypeVar
 from functools import lru_cache
+from langfuse import Langfuse
 from pydantic import AliasChoices, Field, SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 T = TypeVar("T", bound=BaseSettings)
 
 REFUSAL_MESSAGE = "I'm sorry, I can only answer questions about the FinCEN data."
-
 
 class AgentConfig(BaseSettings):
     model_config = SettingsConfigDict(
@@ -100,3 +100,12 @@ get_neo4j_config = _cached_config(Neo4jConfig)
 get_langfuse_config = _cached_config(LangfuseConfig)
 get_postgres_config = _cached_config(PostgresConfig)
 get_temporal_config = _cached_config(TemporalConfig)
+
+def init_langfuse(config: LangfuseConfig) -> Langfuse:
+    langfuse = Langfuse(
+        public_key=config.langfuse_public_key,
+        secret_key=config.langfuse_secret_key.get_secret_value(),
+        host=config.langfuse_host,
+    )
+    langfuse.auth_check()
+    return langfuse
