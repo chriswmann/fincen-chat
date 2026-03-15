@@ -23,11 +23,12 @@ temporal_planner = TemporalAgent(planning_agent)
 _neo4j = get_neo4j_config()
 _credentials = _neo4j.get_encoded_credentials()
 
-neo4j_mcp = MCPServerStreamableHTTP(
-    _neo4j.neo4j_mcp_url,
-    headers={"Authorization": f"Basic {_credentials}"},
-    tool_prefix="neo4j",  # Sets the toolset ID for Temporal activity naming
-)
+def _get_neo4j_mcp() -> MCPServerStreamableHTTP:
+    return MCPServerStreamableHTTP(
+        _neo4j.neo4j_mcp_url,
+        headers={"Authorization": f"Basic {_credentials}"},
+        tool_prefix="neo4j",  # Sets the toolset ID for Temporal activity naming
+    )
 
 research_agent = Agent(
     _config.model,
@@ -35,7 +36,7 @@ research_agent = Agent(
     instructions="""You are a research agent investigating FinCEN data.
     Given a specific sub-query, use the Neo4j graph tools to find relevant data.
     Report your findings thoroughly, listing all entities discovered.""",
-    toolsets=[neo4j_mcp],
+    toolsets=[_get_neo4j_mcp()],
     name="researcher",
     retries=3,
 )
