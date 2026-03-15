@@ -26,7 +26,7 @@ _credentials = _neo4j.get_encoded_credentials()
 neo4j_mcp = MCPServerStreamableHTTP(
     _neo4j.neo4j_mcp_url,
     headers={"Authorization": f"Basic {_credentials}"},
-    tool_prefix="neo4j",  # Sets the toolset ID for Teporal activity naming
+    tool_prefix="neo4j",  # Sets the toolset ID for Temporal activity naming
 )
 
 research_agent = Agent(
@@ -54,4 +54,4 @@ synthesis_agent = Agent(
 )
 synthesis_agent.instrument_all()
 
-temporal_sythesiser = TemporalAgent(synthesis_agent)
+temporal_synthesiser = TemporalAgent(synthesis_agent)

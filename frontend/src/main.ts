@@ -39,8 +39,8 @@ interface SSEEvent {
 
 interface ResponseMeta {
   entities: {
-    name: string, entity_type: string | null;
-    country: string | null
+    name: string; entity_type: string | null;
+    country: string | null;
   }[];
   confidence: 'high' | 'medium' | 'low';
   data_found: boolean;
@@ -92,7 +92,7 @@ function parseSSEEvents(raw: string): { events: SSEEvent[]; remaining: string } 
 async function sendMessage(message: string): Promise<void> {
   const assistantDiv = appendMessage('assistant', '');
 
-  const submitButton = getElement<HTMLButtonElement>('button');
+  const submitButton = getElement<HTMLButtonElement>('#chat-form button');
   input.disabled = true;
   submitButton.disabled = true;
   let rawMarkdown = '';
@@ -231,7 +231,7 @@ investigationTab.addEventListener("click", () => {
 });
 
 // --- Investigation logic ---
-const investigationSubmitButton = getElement<HTMLButtonElement>("#investigation-submit-button");
+const investigationSubmitButton = getElement<HTMLButtonElement>("#investigation-submit");
 const investigationInputDiv = getElement<HTMLTextAreaElement>("#investigation-input");
 const investigationStatusDiv = getElement<HTMLDivElement>("#investigation-status");
 const investigationReportDiv = getElement<HTMLDivElement>("#investigation-report");
@@ -269,7 +269,7 @@ async function submitInvestigation(query: string): Promise<string | null> {
   return null;
 }
 
-async function pollStatus(investigationId: string): Promise<string> {
+async function pollStatus(investigationId: string): Promise<any> {
   const response = await fetch(`/api/v1/investigations/${investigationId}/status`);
   if (!response.ok) {
     throw new Error(`Server error: ${response.status}`);
@@ -277,7 +277,7 @@ async function pollStatus(investigationId: string): Promise<string> {
   return response.json();
 }
 
-async function getResult(investigationId: string): Promise<string> {
+async function getResult(investigationId: string): Promise<any> {
   const response = await fetch(`/api/v1/investigations/${investigationId}/result`);
   if (!response.ok) {
     throw new Error(`Server error: ${response.status}`);
@@ -313,7 +313,7 @@ investigationSubmitButton.addEventListener("click", async (e: Event) => {
         return;
       }
 
-      investigationStatusDiv.textContent = `Status: ${statusData.status} (Step ${statusData.progresss} of ${statusData.total_steps} || " ? "})`;
+      investigationStatusDiv.textContent = `Status: ${statusData.status} (Step ${statusData.progress} of ${statusData.total_steps || "?"})`;
 
       if (statusData.status === "complete") {
         clearInterval(pollingInterval!);
@@ -346,7 +346,7 @@ async function renderReport(report: any) {
   markdown += `## Executive Summary\n${report.executive_summary}\n\n`;
   markdown += `## Detailed Findings\n${report.detailed_findings}\n\n`;
 
-  markdown += "## Key Entitiies Involved\n";
+  markdown += "## Key Entities Involved\n";
   if (report.entities_involved && report.entities_involved.length > 0) {
     report.entities_involved.forEach((e: any) => {
       markdown += `* ${e.name} (${e.type || "Unknown"})\n`;

@@ -2,7 +2,7 @@ from temporalio import workflow
 from pydantic_ai.durable_exec.temporal import PydanticAIWorkflow
 
 with workflow.unsafe.imports_passed_through():
-    from .agents import temporal_planner, temporal_researcher, temporal_sythesiser
+    from .agents import temporal_planner, temporal_researcher, temporal_synthesiser
 from .models import (
     InvestigationInput,
     InvestigationReport,
@@ -18,7 +18,7 @@ class InvestigationWorkflow(PydanticAIWorkflow):
     __pydantic_ai_agents__ = [
         temporal_planner,
         temporal_researcher,
-        temporal_sythesiser,
+        temporal_synthesiser,
     ]
 
     def __init__(self) -> None:
@@ -43,7 +43,7 @@ class InvestigationWorkflow(PydanticAIWorkflow):
 
         self._status = InvestigationWorkflowState.SYNTHESISING
         synthesis_prompt = _format_synthesis_prompt(input.query, plan, findings)
-        report_result = await temporal_sythesiser.run(synthesis_prompt)
+        report_result = await temporal_synthesiser.run(synthesis_prompt)
         self._status = InvestigationWorkflowState.COMPLETE
 
         return report_result.output
