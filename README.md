@@ -62,6 +62,11 @@ mise run setup     # Boot Docker services and load FinCEN data
 mise run run       # Start the FastAPI dev server
 mise run teardown  # Stop services and delete local data
 ```
+
+> Investigate potential money laundering networks linking offshore shell companies in the British Virgin Islands to high-value real estate purchases in Miami and New York between 2018 and 2022. Map out the key front companies and financial intermediaries involved.
+
+Is a good example of a query for investigation.
+
 ## Security
 `.env` doesn't contain any real secrets and I wanted to keep manual configuration to a minimum, hence why it isn't in `.gitignore` (or, even better, a secrets manager isn't used).
 
